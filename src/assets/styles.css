@@ -1,0 +1,276 @@
+/* --- Global Container --- */
+#linkedin-extension-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2147483647;
+    /* Maximum Z-Index to sit on top of everything */
+    pointer-events: none;
+    /* Let clicks pass through to LinkedIn */
+}
+
+/* Re-enable clicks for our elements */
+#linkedin-extension-root * {
+    pointer-events: auto;
+}
+
+/* --- Wrapper for the button --- */
+.ext-call-btn-wrapper {
+    display: inline-flex;
+    align-items: center;
+    z-index: 99;
+    /* Higher than text, lower than modals */
+    line-height: normal;
+    /* Reset LinkedIn line-height */
+}
+
+/* 1. Position: Overlaid on the Profile Picture */
+.ext-pos-photo {
+    position: absolute;
+    bottom: 5px;
+    right: -5px;
+    background: white;
+    padding: 3px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid #e0e0e0;
+    z-index: 100;
+    /* Ensure it sits on top of the image */
+}
+
+/* 2. Position: Next to the Name */
+.ext-pos-name {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+/* --- Button Styling (Reverted to the "Fine" version) --- */
+.ext-custom-btn {
+    /* Reset & Layout */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+
+    /* Visuals - Standard LinkedIn Green */
+    background-color: #057642;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 14px;
+
+    /* Typography */
+    font-weight: 600;
+    font-size: 14px;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.2;
+
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    /* Prevent LinkedIn link styles */
+}
+
+.ext-custom-btn:hover {
+    background-color: #046136;
+    text-decoration: none;
+}
+
+.ext-custom-btn:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+/* --- Floating Widget (Sleek Blue Pill) --- */
+.ext-widget-container * {
+    box-sizing: border-box;
+}
+
+.ext-widget-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 2147483647;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ext-widget-minimized {
+    width: 240px;
+    border-radius: 8px;
+}
+
+/* Header Section */
+.ext-widget-header {
+    background-color: #0a66c2;
+    /* LinkedIn Blue */
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ext-widget-header:hover {
+    background-color: #004182;
+}
+
+/* Header Text */
+.ext-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ext-header-name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.ext-header-status {
+    font-size: 11px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 400;
+}
+
+/* Pulsing Dot */
+.ext-dot-indicator {
+    width: 6px;
+    height: 6px;
+    background-color: #4ade80;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 4px #4ade80;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Header Icons */
+.ext-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.8;
+}
+
+.ext-header-controls:hover {
+    opacity: 1;
+}
+
+/* Body Section */
+.ext-widget-body {
+    padding: 24px 20px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.ext-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.ext-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ext-call-meta {
+    margin-bottom: 20px;
+}
+
+.ext-status-text {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.ext-timer-large {
+    display: block;
+    font-size: 24px;
+    font-weight: 300;
+    color: #333;
+    font-feature-settings: "tnum";
+}
+
+/* Controls */
+.ext-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.ext-icon-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ext-icon-btn:active {
+    transform: scale(0.92);
+}
+
+.btn-mute {
+    background-color: #f3f2ef;
+    color: #555;
+}
+
+.btn-mute:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-muted-active {
+    background-color: #333;
+    color: white;
+}
+
+.btn-hangup {
+    background-color: #cc1016;
+    color: white;
+}
+
+.btn-hangup:hover {
+    background-color: #a30d12;
+}

@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "LinkedIn Call Extension",
+    "version": "1.0",
+    "description": "Call candidates via Plivo directly from LinkedIn",
+    "permissions": ["activeTab", "scripting"],
+    "content_scripts": [
+      {
+        "matches": ["https://www.linkedin.com/*"],
+        "js": ["content.js"],
+        "css": ["assets/content.css"]
+      }
+    ]
+  }
