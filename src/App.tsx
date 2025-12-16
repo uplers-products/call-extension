@@ -1,14 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Provider } from 'react-redux';
-import store from './store/store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import store, { type RootState } from './store/store';
+import { setAuth, clearAuth, setLoading } from './store/authSlice';
 import CallWidget from './components/CallWidget';
 import CallButton from './components/CallButton';
 
-const App: React.FC = () => {
-  // We only track ONE active node for the button
+const AppContent: React.FC = () => {
+  const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const authState = useSelector((state: RootState) => state.auth);
+  console.log('authState in app.tsx:', authState);
 
+  // Check auth on mount and listen for storage changes
+  useEffect(() => {
+    const checkAuth = async () => {
+      dispatch(setLoading(true));
+      try {
+        const result = await chrome.storage.local.get([
+          'recruiter_user_token',
+          'ra_user',
+        ]);
+
+        if (result.recruiter_user_token) {
+          dispatch(setAuth({
+            token: result.recruiter_user_token as string,
+            user: (result.ra_user || {}) as Record<string, unknown>,
+          }));
+        } else {
+          dispatch(clearAuth());
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        dispatch(clearAuth());
+      }
+    };
+
+    checkAuth();
+
+    // Listen for storage changes (when user logs in from another tab)
+    const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
+      if (changes.recruiter_user_token) {
+        checkAuth();
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    return () => chrome.storage.onChanged.removeListener(handleStorageChange);
+  }, [dispatch]);
+
+  // Mount point refresh logic
   useEffect(() => {
     const refreshMountPoint = () => {
       // 1. Identify valid targets on the LinkedIn page
@@ -54,10 +96,8 @@ const App: React.FC = () => {
       // 4. CLEANUP: Remove buttons from other locations (duplicates)
       // This handles cases where user navigates from a profile with a photo to one without
       const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
-      allWrappers.forEach(el => {
-        if (el !== wrapper) {
-          el.remove();
-        }
+      allWrappers.forEach((el) => {
+        if (el !== wrapper) el.remove();
       });
 
       // 5. Update React State
@@ -66,20 +106,23 @@ const App: React.FC = () => {
 
     // Run aggressively (500ms) to handle LinkedIn's dynamic loading (Ember.js)
     const interval = setInterval(refreshMountPoint, 500);
-
     return () => clearInterval(interval);
   }, []);
 
+  // Only show CallButton when authenticated, nothing otherwise
+  // Login status is handled via extension popup (click on extension icon)
+  return (
+    <>
+      <CallWidget />
+      {isAuthenticated && activeNode && activeNode.isConnected && createPortal(<CallButton />, activeNode)}
+    </>
+  );
+};
+
+const App: React.FC = () => {
   return (
     <Provider store={store}>
-      {/* 1. Global Call Widget (Visible only during call) */}
-      <CallWidget />
-
-      {/* 2. Injected Call Button (Portal) */}
-      {activeNode && activeNode.isConnected && createPortal(
-        <CallButton />,
-        activeNode
-      )}
+      <AppContent />
     </Provider>
   );
 };

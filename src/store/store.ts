@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import callReducer from './callSlice';
+import authReducer from './authSlice';
 
 const store = configureStore({
   reducer: {
-    call: callReducer
-  }
+    call: callReducer,
+    auth: authReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

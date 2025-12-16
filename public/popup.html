@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uplers Call Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <h1>Uplers Call Extension</h1>
+    </div>
+    
+    <div class="popup-content">
+      <!-- Loading State -->
+      <div id="loading-state" class="status-section">
+        <div class="spinner"></div>
+        <p>Checking login status...</p>
+      </div>
+
+      <!-- Logged In State -->
+      <div id="logged-in-state" class="status-section hidden">
+        <div class="status-icon success">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h2>Logged in with Uplers</h2>
+        <p id="user-email" class="user-info"></p>
+        <button id="logout-btn" class="btn btn-secondary">Logout</button>
+      </div>
+
+      <!-- Not Logged In State -->
+      <div id="logged-out-state" class="status-section hidden">
+        <div class="status-icon warning">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+        </div>
+        <h2>Not Logged In</h2>
+        <p>Login to make calls from LinkedIn</p>
+        <button id="login-btn" class="btn btn-primary">Login with Uplers</button>
+      </div>
+    </div>
+
+    <div class="popup-footer">
+      <p>Powered by Uplers</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ import type { RootState } from '../store/store';
 const CallButton: React.FC = () => {
   const dispatch = useDispatch();
   const isCalling = useSelector((state: RootState) => state.call.isCalling);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFetchAndCall = async () => {
     if (isCalling) return;

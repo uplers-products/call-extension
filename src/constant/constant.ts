@@ -1,0 +1,1 @@
+export const UPLERS_BASE_URL: string = 'https://platform.uplers.com';
