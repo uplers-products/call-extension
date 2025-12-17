@@ -1,4 +1,4 @@
-import { UPLERS_BASE_URL } from '../src/constant/constant';
+const UPLERS_BASE_URL = 'https://platform.uplers.com';
 
 // When extension is installed, clear storage
 chrome.runtime.onInstalled.addListener(async () => {

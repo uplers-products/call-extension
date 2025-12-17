@@ -1,4 +1,4 @@
-import { UPLERS_BASE_URL } from '../src/constant/constant';
+const UPLERS_BASE_URL = 'https://platform.uplers.com';
 
 // DOM Elements
 const loadingState = document.getElementById('loading-state');
@@ -19,7 +19,7 @@ function showState(state) {
 // Check authentication status
 async function checkAuthStatus() {
   showState(loadingState);
-  
+
   try {
     const result = await chrome.storage.local.get([
       'recruiter_user_token',

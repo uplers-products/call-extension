@@ -48,42 +48,42 @@
 }
 
 /* --- Button Styling (Reverted to the "Fine" version) --- */
-.ext-custom-btn {
+button.ext-custom-btn {
     /* Reset & Layout */
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 0;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin: 0 !important;
 
     /* Visuals - Standard LinkedIn Green */
-    background-color: #057642;
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 6px 14px;
+    background-color: #057642 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 6px 14px !important;
 
     /* Typography */
-    font-weight: 600;
-    font-size: 14px;
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.2;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    line-height: 1.2 !important;
 
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background-color 0.2s ease;
-    text-decoration: none;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    transition: background-color 0.2s ease !important;
+    text-decoration: none !important;
     /* Prevent LinkedIn link styles */
 }
 
-.ext-custom-btn:hover {
-    background-color: #046136;
-    text-decoration: none;
+button.ext-custom-btn:hover {
+    background-color: #046136 !important;
+    text-decoration: none !important;
 }
 
-.ext-custom-btn:disabled {
-    background-color: #888;
-    cursor: not-allowed;
+button.ext-custom-btn:disabled {
+    background-color: #888 !important;
+    cursor: not-allowed !important;
 }
 
 /* --- Floating Widget (Sleek Blue Pill) --- */
@@ -273,4 +273,233 @@
 
 .btn-hangup:hover {
     background-color: #a30d12;
+}
+
+/* --- Floating Dialer Button --- */
+.ext-floating-dialer-btn {
+    position: fixed;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0.375rem 1rem rgba(10, 102, 194, 0.4);
+    transition: all 0.25s ease;
+    z-index: 2147483646;
+}
+
+.ext-floating-dialer-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0.5rem 1.5rem rgba(10, 102, 194, 0.5);
+}
+
+.ext-floating-dialer-btn:disabled {
+    background: #888;
+    cursor: not-allowed;
+    transform: translateY(-50%);
+    box-shadow: none;
+}
+
+/* --- Dialer Modal Overlay --- */
+.ext-dialer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
+    backdrop-filter: blur(6px);
+}
+
+/* --- Dialer Modal (Dark Theme) --- */
+.ext-dialer-modal {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+    border-radius: 1.25rem;
+    width: 22rem;
+    padding: 2rem;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Dialer Header */
+.ext-dialer-modal .ext-dialer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.ext-dialer-modal .ext-dialer-header span {
+   font-size: 1.25rem;
+}
+
+.ext-dialer-modal .ext-dialer-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.ext-dialer-modal .ext-dialer-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Dialer Phone Number Display */
+.ext-dialer-modal .ext-dialer-display {
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.ext-dialer-modal .ext-dialer-input {
+    width: 100%;
+    height: max-content;
+    padding: 1rem 3rem 1rem 1rem;
+    font-size: 1.625rem;
+    text-align: center;
+    border: none;
+    border-radius: 0.75rem;
+    outline: none;
+    font-family: inherit;
+    letter-spacing: 0.25rem;
+    box-sizing: border-box;
+    background: #2a2a2a;
+    box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    color: #fff;
+}
+
+.ext-dialer-modal .ext-dialer-input::placeholder {
+    font-size: 1.25rem;
+    letter-spacing: 0.05rem;
+    color: #666;
+}
+
+.ext-dialer-modal .ext-dialer-input:focus {
+    box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3), 0 0 0 0.125rem rgba(10, 102, 194, 0.4);
+}
+
+.ext-dialer-modal .ext-dialer-backspace {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.ext-dialer-modal .ext-dialer-backspace:hover {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.15);
+}
+
+/* Dialer Dial Pad */
+.ext-dialer-modal .ext-dialpad {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.ext-dialer-modal .ext-dialpad-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.ext-dialer-modal .ext-dialpad-btn {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    border: none;
+    background: #2a2a2a;
+    font-size: 1.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: #fff;
+    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.3);
+}
+
+.ext-dialer-modal .ext-dialpad-btn:hover {
+    background: #3a3a3a;
+    transform: scale(1.05);
+}
+
+.ext-dialer-modal .ext-dialpad-btn:active {
+    background: #444;
+    transform: scale(0.95);
+}
+
+.ext-dialer-modal .ext-dialpad-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ext-dialer-modal .ext-dialpad-zero {
+    width: 9.75rem;
+    border-radius: 2.25rem;
+}
+
+/* Dialer Call Button */
+.ext-dialer-modal .ext-dialer-call-btn {
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 200, 83, 0.3);
+}
+
+.ext-dialer-modal .ext-dialer-call-btn:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.375rem 1rem rgba(0, 200, 83, 0.4);
+}
+
+.ext-dialer-modal .ext-dialer-call-btn:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }

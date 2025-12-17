@@ -5,6 +5,7 @@ import store, { type RootState } from './store/store';
 import { setAuth, clearAuth, setLoading } from './store/authSlice';
 import CallWidget from './components/CallWidget';
 import CallButton from './components/CallButton';
+import FloatingDialer from './components/FloatingDialer';
 
 const AppContent: React.FC = () => {
   const dispatch = useDispatch();
@@ -114,6 +115,7 @@ const AppContent: React.FC = () => {
   return (
     <>
       <CallWidget />
+      {isAuthenticated && <FloatingDialer />}
       {isAuthenticated && activeNode && activeNode.isConnected && createPortal(<CallButton />, activeNode)}
     </>
   );
