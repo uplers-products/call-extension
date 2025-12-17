@@ -36,5 +36,15 @@
                 "uplers.js"
             ]
         }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "images/*"
+            ],
+            "matches": [
+                "https://www.linkedin.com/*"
+            ]
+        }
     ]
 }

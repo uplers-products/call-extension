@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Phone, X, Delete } from 'lucide-react';
 import { startCall } from '../store/callSlice';
 import type { RootState } from '../store/store';
+import { requestMicPermission } from '../common/Helpers';
+import toast, { Toaster } from 'react-hot-toast';
 
 const FloatingDialer: React.FC = () => {
   const dispatch = useDispatch();
   const isCalling = useSelector((state: RootState) => state.call.isCalling);
   const [isOpen, setIsOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -32,17 +35,35 @@ const FloatingDialer: React.FC = () => {
     setPhoneNumber(value);
   };
 
-  const handleCall = () => {
-    if (phoneNumber.length !== 10 || isCalling) return;
+  const handleCall = async () => {
+    if (phoneNumber.length !== 10 || isCalling || isLoading) return;
 
-    dispatch(startCall({
-      name: phoneNumber,
-      photoUrl: '',
-      contact_number: phoneNumber,
-    }));
+    setIsLoading(true);
 
-    setIsOpen(false);
-    setPhoneNumber('');
+    try {
+      // Check and request microphone permission first
+      const permissionResult = await requestMicPermission();
+
+      if (permissionResult.status !== 'granted') {
+        setIsLoading(false);
+        toast.error(permissionResult.error || 'Please allow microphone access to make calls.');
+        return;
+      }
+
+      dispatch(startCall({
+        name: phoneNumber,
+        photoUrl: '',
+        contact_number: phoneNumber,
+      }));
+
+      setIsOpen(false);
+      setPhoneNumber('');
+    } catch (e) {
+      console.error("Failed to start call", e);
+      toast.error('Failed to start call. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const dialPadButtons = [
@@ -51,8 +72,31 @@ const FloatingDialer: React.FC = () => {
     ['7', '8', '9'],
   ];
 
+  // Common toast options
+  const toastOptions = {
+    duration: 4000,
+    error: {
+      style: {
+        background: 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)',
+        color: 'white',
+      },
+    },
+  };
+
   return (
     <>
+      {/* Toast container - renders in different locations based on modal state */}
+      {!isOpen && (
+        <Toaster
+          position="top-right"
+          containerStyle={{
+            zIndex: 2147483647,
+            marginTop: '4rem',
+          }}
+          toastOptions={toastOptions}
+        />
+      )}
+
       {/* Floating CTA Button */}
       <button
         className="ext-floating-dialer-btn"
@@ -66,6 +110,17 @@ const FloatingDialer: React.FC = () => {
       {/* Dialer Modal */}
       {isOpen && (
         <div className="ext-dialer-overlay" onClick={() => setIsOpen(false)}>
+          {/* Toast container inside overlay so it appears above the modal */}
+          <Toaster
+            position="top-center"
+            containerStyle={{
+              position: 'absolute',
+              top: '1rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+            }}
+            toastOptions={toastOptions}
+          />
           <div className="ext-dialer-modal" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="ext-dialer-header">
@@ -125,14 +180,15 @@ const FloatingDialer: React.FC = () => {
             <button
               className="ext-dialer-call-btn"
               onClick={handleCall}
-              disabled={phoneNumber.length !== 10 || isCalling}
+              disabled={phoneNumber.length !== 10 || isCalling || isLoading}
             >
               <Phone size={20} />
-              <span>Call</span>
+              <span>{isLoading ? 'Checking...' : 'Call'}</span>
             </button>
           </div>
         </div>
       )}
+
     </>
   );
 };

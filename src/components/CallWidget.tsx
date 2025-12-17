@@ -90,7 +90,7 @@ const CallWidget: React.FC = () => {
                 <div className="ext-widget-body">
                     <div className="ext-avatar-wrapper">
                         <img
-                            src={talentData?.photoUrl || "https://via.placeholder.com/64"}
+                            src={talentData?.photoUrl || chrome.runtime.getURL('images/placeholder-talent-dp.jpg')}
                             className="ext-avatar"
                             alt="Profile"
                         />

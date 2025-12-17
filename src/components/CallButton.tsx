@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Phone } from 'lucide-react';
 import { startCall } from '../store/callSlice';
 import type { RootState } from '../store/store';
+import { requestMicPermission } from '../common/Helpers';
+import toast from 'react-hot-toast';
 
 const CallButton: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +16,15 @@ const CallButton: React.FC = () => {
     setLoading(true);
 
     try {
+      // Check and request microphone permission first
+      const permissionResult = await requestMicPermission();
+      
+      if (permissionResult.status !== 'granted') {
+        toast.error(permissionResult.error || 'Please allow microphone access to make calls.');
+        setLoading(false);
+        return;
+      }
+
       // 1. Scrape Data from DOM
       const name = document.querySelector('h1')?.innerText || "Unknown";
       const photoEl = document.querySelector('.pv-top-card-profile-picture__image--show') as HTMLImageElement;
@@ -31,6 +42,7 @@ const CallButton: React.FC = () => {
 
     } catch (e) {
       console.error("Failed to start call", e);
+      toast.error('Failed to start call. Please try again.');
     } finally {
       setLoading(false);
     }
