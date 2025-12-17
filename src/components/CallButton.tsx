@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Phone } from 'lucide-react';
-import { startCall } from '../store/callSlice';
 import type { RootState } from '../store/store';
 import { requestMicPermission } from '../common/Helpers';
+import { usePlivo } from '../context/PlivoContext';
+import { fetchTalentDetails } from '../services/userActions';
 import toast from 'react-hot-toast';
 
 const CallButton: React.FC = () => {
-  const dispatch = useDispatch();
-  const isCalling = useSelector((state: RootState) => state.call.isCalling);
+  const { initiateCall } = usePlivo();
+  const { isCalling, callPopupOpen } = useSelector((state: RootState) => state.call);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFetchAndCall = async () => {
-    if (isCalling) return;
+    if (isCalling || callPopupOpen) return;
     setLoading(true);
 
     try {
@@ -30,15 +31,26 @@ const CallButton: React.FC = () => {
       const photoEl = document.querySelector('.pv-top-card-profile-picture__image--show') as HTMLImageElement;
       const photoUrl = photoEl?.src || "";
 
-      // 2. Simulate API Call to get Number
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 2. Get LinkedIn URL from current page (remove trailing slash if present)
+      const linkedin_url = window.location.href.replace(/\/$/, '');
 
-      // 3. Dispatch Start Call
-      dispatch(startCall({
+      // 3. Fetch contact number from API
+      const response = await fetchTalentDetails({ linkedin_url });
+      const responseData = response.data as any;
+      
+      if (responseData?.status !== 'success' || !responseData?.data?.contact_number) {
+        toast.error('Unable to fetch contact details. Please try again.');
+        return;
+      }
+
+      const contact_number = responseData.data.contact_number;
+
+      // 4. Initiate Call via Plivo Context
+      await initiateCall({
         name,
         photoUrl,
-        contact_number: '+15550000000'
-      }));
+        contact_number,
+      });
 
     } catch (e) {
       console.error("Failed to start call", e);
@@ -48,17 +60,19 @@ const CallButton: React.FC = () => {
     }
   };
 
+  const isDisabled = loading || isCalling || callPopupOpen;
+
   return (
     <button 
         className="ext-custom-btn" 
         onClick={handleFetchAndCall}
-        disabled={loading || isCalling}
+        disabled={isDisabled}
     >
         {loading ? (
            <span>Loading...</span>
         ) : (
            <>
-             <Phone size={16} fill={isCalling ? "#ccc" : "currentColor"} />
+             <Phone size={16} fill={isDisabled ? "#ccc" : "currentColor"} />
              <span>{isCalling ? "In Call" : "Call"}</span>
            </>
         )}

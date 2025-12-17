@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Phone, X, Delete } from 'lucide-react';
-import { startCall } from '../store/callSlice';
 import type { RootState } from '../store/store';
 import { requestMicPermission } from '../common/Helpers';
+import { usePlivo } from '../context/PlivoContext';
 import toast, { Toaster } from 'react-hot-toast';
 
 const FloatingDialer: React.FC = () => {
-  const dispatch = useDispatch();
-  const isCalling = useSelector((state: RootState) => state.call.isCalling);
+  const { initiateCall } = usePlivo();
+  const { isCalling, callPopupOpen } = useSelector((state: RootState) => state.call);
   const [isOpen, setIsOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,7 @@ const FloatingDialer: React.FC = () => {
   };
 
   const handleCall = async () => {
-    if (phoneNumber.length !== 10 || isCalling || isLoading) return;
+    if (phoneNumber.length !== 10 || isCalling || callPopupOpen || isLoading) return;
 
     setIsLoading(true);
 
@@ -50,11 +50,12 @@ const FloatingDialer: React.FC = () => {
         return;
       }
 
-      dispatch(startCall({
+      // Initiate call via Plivo Context
+      await initiateCall({
         name: phoneNumber,
         photoUrl: '',
         contact_number: phoneNumber,
-      }));
+      });
 
       setIsOpen(false);
       setPhoneNumber('');
@@ -101,7 +102,7 @@ const FloatingDialer: React.FC = () => {
       <button
         className="ext-floating-dialer-btn"
         onClick={() => setIsOpen(true)}
-        disabled={isCalling}
+        disabled={isCalling || callPopupOpen}
         title="Open Dialer"
       >
         <Phone size={20} />
@@ -180,7 +181,7 @@ const FloatingDialer: React.FC = () => {
             <button
               className="ext-dialer-call-btn"
               onClick={handleCall}
-              disabled={phoneNumber.length !== 10 || isCalling || isLoading}
+              disabled={phoneNumber.length !== 10 || isCalling || callPopupOpen || isLoading}
             >
               <Phone size={20} />
               <span>{isLoading ? 'Checking...' : 'Call'}</span>

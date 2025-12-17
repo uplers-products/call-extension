@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store, { type RootState } from './store/store';
 import { setAuth, clearAuth, setLoading } from './store/authSlice';
+import { PlivoProvider } from './context/PlivoContext';
 import CallWidget from './components/CallWidget';
 import CallButton from './components/CallButton';
 import FloatingDialer from './components/FloatingDialer';
@@ -11,8 +12,6 @@ const AppContent: React.FC = () => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const authState = useSelector((state: RootState) => state.auth);
-  console.log('authState in app.tsx:', authState);
 
   // Check auth on mount and listen for storage changes
   useEffect(() => {
@@ -114,9 +113,13 @@ const AppContent: React.FC = () => {
   // Login status is handled via extension popup (click on extension icon)
   return (
     <>
-      <CallWidget />
-      {isAuthenticated && <FloatingDialer />}
-      {isAuthenticated && activeNode && activeNode.isConnected && createPortal(<CallButton />, activeNode)}
+      {isAuthenticated && (
+        <PlivoProvider>
+          <CallWidget />
+          <FloatingDialer />
+          {activeNode && activeNode.isConnected && createPortal(<CallButton />, activeNode)}
+        </PlivoProvider>
+      )}
     </>
   );
 };
