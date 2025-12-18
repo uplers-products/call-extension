@@ -13,7 +13,12 @@ const AppContent: React.FC = () => {
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  // Check auth on mount and listen for storage changes
+  // Check if current URL is a LinkedIn profile page (e.g., /in/username/)
+  const isLinkedInProfilePage = (): boolean => {
+    return window.location.href.includes('/in/') && window.location.href.includes('linkedin.com');
+  };
+
+  // Check auth status and listen for changes
   useEffect(() => {
     const checkAuth = async () => {
       dispatch(setLoading(true));
@@ -50,51 +55,48 @@ const AppContent: React.FC = () => {
     return () => chrome.storage.onChanged.removeListener(handleStorageChange);
   }, [dispatch]);
 
-  // Mount point refresh logic
+  // Inject call button only on LinkedIn profile pages
   useEffect(() => {
+    if (!isAuthenticated) {
+      const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
+      allWrappers.forEach((el) => el.remove());
+      setActiveNode(null);
+      return;
+    }
+
+    // Only inject on profile pages (URLs with /in/)
+    if (!isLinkedInProfilePage()) {
+      const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
+      allWrappers.forEach((el) => el.remove());
+      setActiveNode(null);
+      return;
+    }
+
     const refreshMountPoint = () => {
-      // 1. Identify valid targets on the LinkedIn page
-      const photoWrapper = document.querySelector('.pv-top-card__non-self-photo-wrapper') as HTMLElement;
-      const nameHeading = document.querySelector('h1.text-heading-xlarge, h1.t-24');
+      // 1. Identify photo wrapper target on the LinkedIn page (check both possible classes)
+      const photoWrapper = (document.querySelector('.pv-top-card__non-self-photo-wrapper') || document.querySelector('.pv-top-card__photo-wrapper')) as HTMLElement;
 
-      let chosenTarget: HTMLElement | null = null;
-      let positionClass = '';
-
-      // 2. PRIORITY LOGIC
-      // Priority A: Profile Picture (Preferred location)
-      if (photoWrapper) {
-        chosenTarget = photoWrapper;
-        positionClass = 'ext-pos-photo';
-
-        // CRITICAL FIX: The absolute positioning of our button relies on the parent being relative.
-        // LinkedIn sometimes sets this to static, so we force it to relative.
-        if (getComputedStyle(photoWrapper).position === 'static') {
-          photoWrapper.style.position = 'relative';
-        }
-      }
-      // Priority B: Name Heading (Fallback if no photo)
-      else if (nameHeading && nameHeading.parentElement) {
-        chosenTarget = nameHeading.parentElement as HTMLElement;
-        positionClass = 'ext-pos-name';
-      }
-
-      // If no valid target found, clear the button and return
-      if (!chosenTarget) {
+      // If no photo wrapper found, clear the button and show browser alert
+      if (!photoWrapper) {
         setActiveNode(null);
+        console.log('No photo wrapper found to inject the button');
         return;
       }
 
-      // 3. Check if we already injected our specific wrapper
-      let wrapper = chosenTarget.querySelector(':scope > .ext-call-btn-wrapper') as HTMLElement;
+      // Ensure parent has relative positioning for absolute positioning
+      if (getComputedStyle(photoWrapper).position === 'static') {
+        photoWrapper.style.position = 'relative';
+      }
+
+      let wrapper = photoWrapper.querySelector(':scope > .ext-call-btn-wrapper') as HTMLElement;
 
       if (!wrapper || !wrapper.isConnected) {
         wrapper = document.createElement('div');
-        wrapper.className = `ext-call-btn-wrapper ${positionClass}`;
-        chosenTarget.appendChild(wrapper);
+        wrapper.className = 'ext-call-btn-wrapper ext-pos-photo';
+        photoWrapper.appendChild(wrapper);
       }
 
-      // 4. CLEANUP: Remove buttons from other locations (duplicates)
-      // This handles cases where user navigates from a profile with a photo to one without
+      // Remove duplicate wrappers
       const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
       allWrappers.forEach((el) => {
         if (el !== wrapper) el.remove();
@@ -106,8 +108,9 @@ const AppContent: React.FC = () => {
 
     // Run aggressively (500ms) to handle LinkedIn's dynamic loading (Ember.js)
     const interval = setInterval(refreshMountPoint, 500);
+    
     return () => clearInterval(interval);
-  }, []);
+  }, [isAuthenticated]);
 
   // Only show CallButton when authenticated, nothing otherwise
   // Login status is handled via extension popup (click on extension icon)

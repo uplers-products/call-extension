@@ -47,8 +47,6 @@ export interface ApiResponse<T = unknown> {
 
 export interface InitiateCallPayload {
   contact_number: string;
-  hr_id?: string;
-  talent_id?: string;
 }
 
 export interface RecordCallPayload {

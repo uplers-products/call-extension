@@ -1,4 +1,9 @@
-/* --- Global Container --- */
+/* ============================================
+   GLOBAL CONTAINER & ROOT STYLES
+   ============================================ */
+/* START: Global Container & Root Styles */
+
+/* Root container for the extension - positioned to overlay LinkedIn */
 #linkedin-extension-root {
     position: fixed;
     top: 0;
@@ -11,12 +16,21 @@
     /* Let clicks pass through to LinkedIn */
 }
 
-/* Re-enable clicks for our elements */
+/* Re-enable pointer events for extension elements */
 #linkedin-extension-root * {
     pointer-events: auto;
 }
 
-/* --- Wrapper for the button --- */
+/* END: Global Container & Root Styles */
+
+
+/* ============================================
+   CALL BUTTON COMPONENT
+   Component: CallButton.tsx
+   ============================================ */
+/* START: Call Button Component */
+
+/* Wrapper for the call button - positions button on LinkedIn profile */
 .ext-call-btn-wrapper {
     display: inline-flex;
     align-items: center;
@@ -26,28 +40,37 @@
     /* Reset LinkedIn line-height */
 }
 
-/* 1. Position: Overlaid on the Profile Picture */
+/* Position: Overlaid on the Profile Picture */
 .ext-pos-photo {
     position: absolute;
     bottom: 5px;
-    right: -5px;
+    left: 50%;
+    transform: translateX(-50%);
     background: white;
     padding: 3px;
     border-radius: 20px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     border: 1px solid #e0e0e0;
     z-index: 100;
-    /* Ensure it sits on top of the image */
+    /* Ensure it sits on top of the image and centered horizontally */
 }
 
-/* 2. Position: Next to the Name */
+/* Position: Next to the Name Heading */
 .ext-pos-name {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
 }
 
-/* --- Button Styling (Reverted to the "Fine" version) --- */
+/* Container for multiple buttons (Call + Show Contact) */
+.ext-call-buttons-container {
+    display: flex !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+}
+
+/* Base button styling - LinkedIn green theme */
 button.ext-custom-btn {
     /* Reset & Layout */
     box-sizing: border-box !important;
@@ -57,7 +80,7 @@ button.ext-custom-btn {
     margin: 0 !important;
 
     /* Visuals - Standard LinkedIn Green */
-    background-color: #057642 !important;
+    background-color: #057642;
     color: white !important;
     border: none !important;
     border-radius: 16px !important;
@@ -76,21 +99,41 @@ button.ext-custom-btn {
     /* Prevent LinkedIn link styles */
 }
 
+/* Button hover state */
 button.ext-custom-btn:hover {
-    background-color: #046136 !important;
-    text-decoration: none !important;
+    background-color: #046136;
+    text-decoration: none;
+}
+
+/* Show Contact Button - LinkedIn blue theme */
+button.ext-custom-btn.ext-btn-contact {
+    background-color: #0a66c2;
+    /* LinkedIn Blue */
+}
+
+button.ext-custom-btn.ext-btn-contact:hover {
+    background-color: #004182;
 }
 
 button.ext-custom-btn:disabled {
     background-color: #888 !important;
-    cursor: not-allowed !important;
 }
 
-/* --- Floating Widget (Sleek Blue Pill) --- */
+/* END: Call Button Component */
+
+
+/* ============================================
+   CALL WIDGET COMPONENT
+   Component: CallWidget.tsx
+   ============================================ */
+/* START: Call Widget Component */
+
+/* Global box-sizing for widget container */
 .ext-widget-container * {
     box-sizing: border-box;
 }
 
+/* Main widget container - floating call widget */
 .ext-widget-container {
     position: fixed;
     bottom: 20px;
@@ -106,12 +149,13 @@ button.ext-custom-btn:disabled {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Minimized widget state */
 .ext-widget-minimized {
     width: 240px;
     border-radius: 8px;
 }
 
-/* Header Section */
+/* Widget Header Section */
 .ext-widget-header {
     background-color: #0a66c2;
     /* LinkedIn Blue */
@@ -128,7 +172,7 @@ button.ext-custom-btn:disabled {
     background-color: #004182;
 }
 
-/* Header Text */
+/* Header Text Elements */
 .ext-header-info {
     display: flex;
     flex-direction: column;
@@ -141,6 +185,13 @@ button.ext-custom-btn:disabled {
     line-height: 1.2;
 }
 
+.ext-header-phone {
+    font-weight: 400;
+    font-size: 12px;
+    color: #ffffff;
+    margin-left: .25rem;
+}
+
 .ext-header-status {
     font-size: 11px;
     opacity: 0.9;
@@ -150,7 +201,7 @@ button.ext-custom-btn:disabled {
     font-weight: 400;
 }
 
-/* Pulsing Dot */
+/* Pulsing Dot Indicator - shows call status */
 .ext-dot-indicator {
     width: 6px;
     height: 6px;
@@ -161,6 +212,7 @@ button.ext-custom-btn:disabled {
     animation: pulse 2s infinite;
 }
 
+/* Pulse animation for status indicator */
 @keyframes pulse {
     0% {
         opacity: 1;
@@ -175,7 +227,7 @@ button.ext-custom-btn:disabled {
     }
 }
 
-/* Header Icons */
+/* Header Control Icons */
 .ext-header-controls {
     display: flex;
     align-items: center;
@@ -187,13 +239,14 @@ button.ext-custom-btn:disabled {
     opacity: 1;
 }
 
-/* Body Section */
+/* Widget Body Section */
 .ext-widget-body {
     padding: 24px 20px;
     text-align: center;
     background-color: #fff;
 }
 
+/* Avatar Wrapper */
 .ext-avatar-wrapper {
     position: relative;
     display: inline-block;
@@ -209,6 +262,7 @@ button.ext-custom-btn:disabled {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Call Metadata Section */
 .ext-call-meta {
     margin-bottom: 20px;
 }
@@ -228,7 +282,7 @@ button.ext-custom-btn:disabled {
     font-feature-settings: "tnum";
 }
 
-/* Controls */
+/* Call Control Buttons */
 .ext-controls {
     display: flex;
     justify-content: center;
@@ -252,6 +306,7 @@ button.ext-custom-btn:disabled {
     transform: scale(0.92);
 }
 
+/* Mute Button Styles */
 .btn-mute {
     background-color: #f3f2ef;
     color: #555;
@@ -266,6 +321,7 @@ button.ext-custom-btn:disabled {
     color: white;
 }
 
+/* Hangup Button Styles */
 .btn-hangup {
     background-color: #cc1016;
     color: white;
@@ -275,7 +331,16 @@ button.ext-custom-btn:disabled {
     background-color: #a30d12;
 }
 
-/* --- Floating Dialer Button --- */
+/* END: Call Widget Component */
+
+
+/* ============================================
+   FLOATING DIALER COMPONENT
+   Component: FloatingDialer.tsx
+   ============================================ */
+/* START: Floating Dialer Component */
+
+/* Floating Dialer Button - fixed position on right side */
 .ext-floating-dialer-btn {
     position: fixed;
     right: 1.25rem;
@@ -308,7 +373,7 @@ button.ext-custom-btn:disabled {
     box-shadow: none;
 }
 
-/* --- Dialer Modal Overlay --- */
+/* Dialer Modal Overlay - full screen backdrop */
 .ext-dialer-overlay {
     position: fixed;
     top: 0;
@@ -323,7 +388,7 @@ button.ext-custom-btn:disabled {
     backdrop-filter: blur(6px);
 }
 
-/* --- Dialer Modal (Dark Theme) --- */
+/* Dialer Modal - dark theme */
 .ext-dialer-modal {
     background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
     border-radius: 1.25rem;
@@ -347,9 +412,10 @@ button.ext-custom-btn:disabled {
 }
 
 .ext-dialer-modal .ext-dialer-header span {
-   font-size: 1.25rem;
+    font-size: 1.25rem;
 }
 
+/* Dialer Close Button */
 .ext-dialer-modal .ext-dialer-close {
     background: none;
     border: none;
@@ -402,6 +468,7 @@ button.ext-custom-btn:disabled {
     box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3), 0 0 0 0.125rem rgba(10, 102, 194, 0.4);
 }
 
+/* Dialer Backspace Button */
 .ext-dialer-modal .ext-dialer-backspace {
     position: absolute;
     right: 0.75rem;
@@ -467,6 +534,7 @@ button.ext-custom-btn:disabled {
     transform: none;
 }
 
+/* Zero button - wider than other dialpad buttons */
 .ext-dialer-modal .ext-dialpad-zero {
     width: 9.75rem;
     border-radius: 2.25rem;
@@ -503,3 +571,153 @@ button.ext-custom-btn:disabled {
     box-shadow: none;
     transform: none;
 }
+
+/* END: Floating Dialer Component */
+
+
+/* ============================================
+   CONTACT MODAL COMPONENT
+   Component: ContactModal.tsx
+   ============================================ */
+/* START: Contact Modal Component */
+
+/* Contact Modal Overlay - full screen backdrop */
+.ext-contact-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
+    backdrop-filter: blur(0.375rem);
+}
+
+/* Contact Modal - white theme */
+.ext-contact-modal {
+    background: white;
+    border-radius: 1rem;
+    width: 28rem;
+    max-width: 90vw;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* Contact Modal Header */
+.ext-contact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 0.0625rem solid #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.ext-contact-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Contact Modal Close Button */
+.ext-contact-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.ext-contact-close:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+/* Contact Modal Body */
+.ext-contact-body {
+    padding: 1.5rem;
+}
+
+/* Contact Name Display */
+.ext-contact-name {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Contact Item - phone/email container */
+.ext-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #e0e0e0;
+}
+
+.ext-contact-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Unavailable contact item styling */
+.ext-contact-item.ext-contact-unavailable {
+    opacity: 0.6;
+}
+
+/* Contact Icon - circular icon container */
+.ext-contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #0a66c2;
+    color: white;
+    flex-shrink: 0;
+}
+
+.ext-contact-unavailable .ext-contact-icon {
+    background-color: #888;
+}
+
+/* Contact Details Container */
+.ext-contact-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Contact Label - uppercase label text */
+.ext-contact-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+/* Contact Value - actual contact info */
+.ext-contact-value {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #333;
+    word-break: break-all;
+}
+
+/* END: Contact Modal Component */

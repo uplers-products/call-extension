@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Plivo from 'plivo-browser-sdk';
 import Pusher from 'pusher-js';
 import type { RootState } from '../store/store';
-import { 
+import {
   openCallPopup,
-  startCall, 
-  setAtsCallId, 
-  setCallStatus, 
+  startCall,
+  setAtsCallId,
+  setCallStatus,
   endCall,
   closeCallPopup
 } from '../store/callSlice';
@@ -65,6 +65,8 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (!user || !(user as any).enc_id) return;
 
+    // console.log('[Plivo] Pusher setup', 'user:', user, 'PUSHER_APP_KEY:', PUSHER_APP_KEY, 'PUSHER_APP_CLUSTER:', PUSHER_APP_CLUSTER);
+
     const PUSHER_CHANNEL = `recruiter-call-${(user as any).enc_id}`;
     const PUSHER_PROGRESS_EVENT = 'call_status_updated';
 
@@ -73,28 +75,29 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     pusher.connection.bind('error', (err: any) => {
-      console.error('Pusher connection error:', err);
+      console.error('[Plivo] PUSHER connection error:', err);
     });
 
     const channel = pusher.subscribe(PUSHER_CHANNEL);
 
     channel.bind('pusher:subscription_error', (err: any) => {
-      console.error('Pusher subscription error:', err);
+      console.error('[Plivo] PUSHER subscription error:', err);
     });
 
     channel.bind(PUSHER_PROGRESS_EVENT, (data: PusherCallStatusData) => {
-      console.log('Pusher data:', data);
-      dispatch(setCallStatus({ 
-        status: data.status.toLowerCase().replace(' ', '') as CallStatus, 
-        message: data.message 
+      console.log('[Plivo] PUSHER call status update:', data);
+
+      dispatch(setCallStatus({
+        status: data.status.toLowerCase().replace(' ', '') as CallStatus,
+        message: data.message
       }));
-      if (data.end_call) {
-        resetCallState();
-      }
+
+      if (data.end_call) { resetCallState(); }
     });
 
     return () => {
-      console.log('Cleaning up Pusher on unmount');
+      console.log('[Plivo] Cleaning up PUSHER on unmount');
+
       channel.unbind(PUSHER_PROGRESS_EVENT);
       pusher.unsubscribe(PUSHER_CHANNEL);
       pusher.disconnect();
@@ -104,7 +107,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // PLIVO CLEANUP
   useEffect(() => {
     return () => {
-      console.log('Cleaning up Plivo client on unmount');
+      console.log('[Plivo] Cleaning up client on unmount');
       if (plivoClientRef.current) {
         plivoClientRef.current.client.logout();
         plivoClientRef.current = null;
@@ -130,20 +133,24 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Initialize Plivo Client
   const initializePlivoClient = async () => {
+
     if (plivoClientRef.current) {
-      console.log('Existing Plivo client found, cleaning up old instance');
+      console.log('[Plivo] Existing client found, cleaning up old instance');
       plivoClientRef.current.client.logout();
       plivoClientRef.current = null;
     }
 
-    console.log('Plivo Client Initialization');
-
-    const options = {
-      debug: 'DEBUG' as const,
+    const options: any = {
+      debug: 'OFF',
       enableTracking: true,
+      permOnClick: true, // Request mic permission on user action for better browser support
+      audioConstraints: { audio: true }, // Ensure audio is enabled
+      enableQualityTracking: 'ALL',
       username: (user as any).plivo_username,
       password: (user as any).enc_id,
     };
+
+    console.log('[Plivo] initializePlivoClient:', options);
 
     try {
       const plivoClient = new Plivo(options);
@@ -152,55 +159,161 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       plivoClient.client.setRingToneBack(true);
       plivoClient.client.setConnectTone(true);
 
+      // PLIVO EVENT LISTENERS
+      const client = plivoClient.client as any;
+
+      // PLIVO LOGIN
       if (!plivoClient.client?.isLoggedIn) {
         plivoClient.client.login((user as any).plivo_username, (user as any).enc_id);
       }
 
-      // PLIVO EVENT LISTENERS
-      const client = plivoClient.client as any;
-      
-      client.on('onLogin', () => {
-        console.log('Plivo - Login successful');
+      // Media permission events
+      client.on('onMediaPermission', (permissionInfo: any) => {
+        console.log('[Plivo] onMediaPermission:', permissionInfo);
+
+        if (permissionInfo && !permissionInfo.status) {
+          console.error('[Plivo] Media permission was denied by browser');
+          toast.error('Please allow microphone access to make calls.');
+        }
+      });
+
+      client.on('onLogin', async () => {
+        console.log('[Plivo] onLogin');
+
+        // Initialize audio devices after successful login
+        try {
+          const audioDevices = plivoClient.client.audio;
+          if (audioDevices) {
+            // Reveal audio devices first to ensure they are available
+            await audioDevices.revealAudioDevices('input');
+            await audioDevices.revealAudioDevices('output');
+
+            // Get available microphone devices
+            const micDevices = await audioDevices.availableDevices('audioinput');
+            console.log('[Plivo] Available microphone devices:', micDevices);
+            
+            // Set the default microphone if available
+            if (micDevices && micDevices.length > 0) {
+              const defaultMic = micDevices[0] as MediaDeviceInfo;
+              audioDevices.microphoneDevices.set(defaultMic.deviceId);
+              console.log('[Plivo] Microphone set to:', defaultMic.label || defaultMic.deviceId);
+            }
+
+            // Get available speaker devices
+            const speakerDevices = await audioDevices.availableDevices('audiooutput');
+            console.log('[Plivo] Available speaker devices:', speakerDevices);
+            
+            // Set the default speaker if available
+            if (speakerDevices && speakerDevices.length > 0) {
+              const defaultSpeaker = speakerDevices[0] as MediaDeviceInfo;
+              audioDevices.speakerDevices.set(defaultSpeaker.deviceId);
+              console.log('[Plivo] Speaker set to:', defaultSpeaker.label || defaultSpeaker.deviceId);
+            }
+          }
+        } catch (audioError) {
+          console.error('[Plivo] Error setting up audio devices:', audioError);
+        }
+
         performCall();
       });
 
       client.on('onLoginFailed', (error: any) => {
-        console.log('Plivo - Login failed:', error);
+        console.error('[Plivo] onLoginFailed:', error);
+
         dispatch(setCallStatus({ status: 'failed', message: 'Login failed' }));
         stopRinging();
       });
 
       client.on('onError', (error: any) => {
-        console.error('Plivo - Error:', error);
+        console.error('[Plivo] onError:', error);
       });
 
       client.on('onIncomingCall', (callInfo: { callUUID: string }) => {
-        console.log('Plivo - Incoming call');
+        console.log('[Plivo] onIncomingCall:', callInfo);
+
         dispatch(setCallStatus({ status: 'connecting' }));
         stopRinging();
+
         plivoClient.client.answer(callInfo.callUUID, 'reject');
       });
 
       client.on('onCalling', () => {
-        console.log('Plivo - onCalling');
+        console.log('[Plivo] onCalling');
+
+        // Ensure microphone is unmuted when call starts
+        try {
+          if (plivoClient.client) {
+            plivoClient.client.unmute();
+            console.log('[Plivo] Microphone unmuted on calling');
+          }
+        } catch (unmuteError) {
+          console.error('[Plivo] Error unmuting on calling:', unmuteError);
+        }
+
         dispatch(setCallStatus({ status: 'calling' }));
+        setIsCallMuted(false);
       });
 
-      client.on('onCallAnswered', (callInfo: { callUUID: string }) => {
-        console.log('Plivo - onCallAnswered:', callInfo);
+      client.on('onCallAnswered', async (callInfo: { callUUID: string }) => {
+        console.log('[Plivo] onCallAnswered:', callInfo);
+
+        // Ensure microphone is unmuted when call is answered
+        try {
+          if (plivoClient.client) {
+            plivoClient.client.unmute();
+            console.log('[Plivo] Microphone unmuted on call answer');
+          }
+        } catch (unmuteError) {
+          console.error('[Plivo] Error unmuting microphone:', unmuteError);
+        }
+
         dispatch(startCall({ callId: callInfo.callUUID }));
         recordCall(callInfo.callUUID);
         stopRinging();
+        setIsCallMuted(false);
       });
 
-      client.on('onCallTerminated', () => {
-        console.log('Plivo - onCallTerminated');
+      client.on('onCallTerminated', (callInfo: any) => {
+        console.log('[Plivo] onCallTerminated:', callInfo);
+
         resetCallState();
         dispatch(setCallStatus({ status: 'ended' }));
       });
 
+      client.on('onCallFailed', (error: any) => {
+        console.error('[Plivo] onCallFailed:', error);
+
+        dispatch(setCallStatus({ status: 'failed', message: 'Call failed' }));
+        stopRinging();
+      });
+
+      // Listen for audio device changes
+      client.on('onAudioDeviceChange', async (deviceInfo: any) => {
+        console.log('[Plivo] onAudioDeviceChange:', deviceInfo);
+        
+        // Re-initialize microphone if device changes
+        try {
+          const audioDevices = plivoClient.client.audio;
+          if (audioDevices) {
+            const micDevices = await audioDevices.availableDevices('audioinput');
+            if (micDevices && micDevices.length > 0) {
+              const defaultMic = micDevices[0] as MediaDeviceInfo;
+              audioDevices.microphoneDevices.set(defaultMic.deviceId);
+              console.log('[Plivo] Microphone re-set after device change');
+            }
+          }
+        } catch (deviceError) {
+          console.error('[Plivo] Error handling device change:', deviceError);
+        }
+      });
+
+      // Listen for connection quality
+      client.on('onConnectionChange', (connectionInfo: any) => {
+        console.log('[Plivo] onConnectionChange:', connectionInfo);
+      });
+
     } catch (error) {
-      console.error('Error initializing Plivo client:', error);
+      console.error('[Plivo] Error initializing client:', error);
       dispatch(setCallStatus({ status: 'failed', message: 'Failed to initialize' }));
     }
   };
@@ -210,31 +323,31 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (isActionLoading || !talentData) return;
     setIsActionLoading(true);
 
-    console.log('Initiating Call');
+    console.log('[Plivo] performCall:', talentData);
+
     dispatch(setCallStatus({ status: 'initiating', message: '' }));
     startRinging();
 
     try {
       const payload = {
         contact_number: talentData.contact_number || '',
-        hr_id: talentData.hr_id,
-        talent_id: talentData.talent_id,
       };
 
       const res = await initiatePlivoCall(payload);
-      
+
       if (res?.status === 200 && res.data) {
         atsCallIdRef.current = res.data.ats_call_id;
         dispatch(setAtsCallId(res.data.ats_call_id));
         dispatch(setCallStatus({ status: 'connecting' }));
       } else {
-        throw new Error(res?.message || 'Failed to initiate call');
+        throw new Error('[Plivo] Failed to initiate call');
       }
     } catch (error) {
-      console.error('Error initiating call:', error);
+      console.error('[Plivo] Error initiating call:', error);
+
       dispatch(setCallStatus({ status: 'failed', message: 'Call initiation failed' }));
       stopRinging();
-      toast.error('Failed to initiate call. Please try again.');
+      toast.error('Error initiating call.');
     } finally {
       setIsActionLoading(false);
     }
@@ -243,18 +356,14 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Record Call
   const recordCall = async (callUUID: string) => {
     try {
-      const res = await recordPlivoCall({ 
-        call_id: callUUID, 
-        ats_call_id: atsCallIdRef.current 
-      });
-      console.log('Initiated recording call:', res);
+      const res = await recordPlivoCall({ call_id: callUUID, ats_call_id: atsCallIdRef.current });
+      console.log('[Plivo] recordCall:', res);
     } catch (error) {
-      console.error('Error recording call:', error);
+      console.error('[Plivo] Error recording call:', error);
     }
   };
 
-  // PUBLIC METHODS
-
+  // PUBLIC METHODS ---------------------------------------------------
   const initiateCall = async (talent: TalentData) => {
     dispatch(openCallPopup(talent));
     setCountdown(5);
@@ -264,10 +373,9 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (isActionLoading) return;
     setIsActionLoading(true);
 
-    console.log('Ending Call');
     try {
       const res = await endPlivoCall({ call_id: callId || '' });
-      
+
       if (res?.status === 200) {
         if (plivoClientRef.current?.client) {
           plivoClientRef.current.client.hangup();
@@ -276,7 +384,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         resetCallState();
       }
     } catch (error) {
-      console.error('Error ending call:', error);
+      console.error('[Plivo] Error ending call:', error);
       toast.error('Failed to end call.');
     } finally {
       setIsActionLoading(false);
@@ -306,11 +414,18 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (plivoClientRef.current?.client) {
       plivoClientRef.current.client.hangup();
     }
+
     dispatch(closeCallPopup());
     stopRinging();
     setIsCallMuted(false);
   };
 
+  // LOGS ---------------------------------------------------
+  // console.log('plivoClientRef:', plivoClientRef.current);
+
+
+
+  // CONTEXT VALUE ---------------------------------------------------
   const contextValue: PlivoContextType = {
     initiateCall,
     handleEndCall,

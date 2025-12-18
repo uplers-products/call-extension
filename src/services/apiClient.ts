@@ -1,4 +1,5 @@
 import axios, { type AxiosResponse, type AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 import type { ApiResponse } from '../types/common.types';
 
 // Create axios instance
@@ -37,11 +38,23 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Logout handler
+// Logout handler - clears all user data from storage
 export const handleLogout = async () => {
   try {
+    // Clear from chrome.storage.local
     await chrome.storage.local.remove(['recruiter_user_token', 'ra_user']);
-    console.log('User logged out due to auth failure');
+    
+    // Also clear from browser localStorage as fallback
+    localStorage.removeItem('recruiter_user_token');
+    localStorage.removeItem('ra_user');
+    
+    console.log('User logged out due to auth failure (401)');
+    
+    // Show toast notification
+    toast.error('Session expired. Please login again.');
+    
+    // Dispatch a custom event so the app can react to the logout
+    window.dispatchEvent(new CustomEvent('auth:logout'));
   } catch (error) {
     console.error('Error during logout:', error);
   }

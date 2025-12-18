@@ -82,6 +82,9 @@ const CallWidget: React.FC = () => {
                 <div className="ext-header-info">
                     <span className="ext-header-name">
                         {talentData?.name || 'Unknown Candidate'}
+                        {talentData?.contact_number && talentData.contact_number !== talentData.name && (
+                            <span className="ext-header-phone"> • {talentData.contact_number}</span>
+                        )}
                     </span>
 
                     {/* Show Status/Timer */}

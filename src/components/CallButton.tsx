@@ -1,25 +1,33 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Phone } from 'lucide-react';
+import { Phone, Contact } from 'lucide-react';
 import type { RootState } from '../store/store';
 import { requestMicPermission } from '../common/Helpers';
 import { usePlivo } from '../context/PlivoContext';
 import { fetchTalentDetails } from '../services/userActions';
+import ContactModal from './ContactModal';
 import toast from 'react-hot-toast';
 
 const CallButton: React.FC = () => {
   const { initiateCall } = usePlivo();
   const { isCalling, callPopupOpen } = useSelector((state: RootState) => state.call);
   const [loading, setLoading] = useState<boolean>(false);
+  const [showContactLoading, setShowContactLoading] = useState<boolean>(false);
+  const [contactModalOpen, setContactModalOpen] = useState<boolean>(false);
+  const [contactData, setContactData] = useState<{
+    contactNumber?: string;
+    email?: string;
+    name: string;
+  } | null>(null);
 
   const handleFetchAndCall = async () => {
-    if (isCalling || callPopupOpen) return;
+    if (isCalling || callPopupOpen || showContactLoading) return;
     setLoading(true);
 
     try {
       // Check and request microphone permission first
       const permissionResult = await requestMicPermission();
-      
+
       if (permissionResult.status !== 'granted') {
         toast.error(permissionResult.error || 'Please allow microphone access to make calls.');
         setLoading(false);
@@ -37,7 +45,7 @@ const CallButton: React.FC = () => {
       // 3. Fetch contact number from API
       const response = await fetchTalentDetails({ linkedin_url });
       const responseData = response.data as any;
-      
+
       if (responseData?.status !== 'success' || !responseData?.data?.contact_number) {
         toast.error('Unable to fetch contact details. Please try again.');
         return;
@@ -60,23 +68,94 @@ const CallButton: React.FC = () => {
     }
   };
 
-  const isDisabled = loading || isCalling || callPopupOpen;
+  const handleShowContact = async () => {
+    if (isCalling || callPopupOpen || loading) return;
+    setShowContactLoading(true);
+
+    try {
+      // 1. Scrape Data from DOM
+      const name = document.querySelector('h1')?.innerText || "Unknown";
+
+      // 2. Get LinkedIn URL from current page (remove trailing slash if present)
+      const linkedin_url = window.location.href.replace(/\/$/, '');
+
+      // 3. Fetch contact details from API
+      const response = await fetchTalentDetails({ linkedin_url });
+      const responseData = response.data as any;
+
+      if (responseData?.status !== 'success') {
+        toast.error('Unable to fetch contact details. Please try again.');
+        return;
+      }
+
+      // 4. Show contact modal with available data
+      setContactData({
+        contactNumber: responseData.data?.contact_number,
+        email: responseData.data?.email,
+        name,
+      });
+      setContactModalOpen(true);
+
+    } catch (e) {
+      console.error("Failed to fetch contact details", e);
+      toast.error('Failed to fetch contact details. Please try again.');
+    } finally {
+      setShowContactLoading(false);
+    }
+  };
+
+  const isDisabled = loading || showContactLoading || isCalling || callPopupOpen;
 
   return (
-    <button 
-        className="ext-custom-btn" 
-        onClick={handleFetchAndCall}
-        disabled={isDisabled}
-    >
-        {loading ? (
-           <span>Loading...</span>
-        ) : (
-           <>
-             <Phone size={16} fill={isDisabled ? "#ccc" : "currentColor"} />
-             <span>{isCalling ? "In Call" : "Call"}</span>
-           </>
-        )}
-    </button>
+    <>
+      <div
+        className="ext-call-buttons-container"
+        style={{
+          pointerEvents: isDisabled ? 'none' : 'auto',
+          cursor: isDisabled ? 'not-allowed' : 'pointer'
+        }}
+      >
+        <button
+          className="ext-custom-btn ext-btn-call"
+          onClick={handleFetchAndCall}
+          disabled={isDisabled}
+        >
+          {loading ? (
+            <span>Loading...</span>
+          ) : (
+            <>
+              <Phone size={16} />
+              <span>{isCalling ? "In Call" : "Call"}</span>
+            </>
+          )}
+        </button>
+
+        <button
+          className="ext-custom-btn ext-btn-contact"
+          onClick={handleShowContact}
+          disabled={isDisabled}
+        >
+          {showContactLoading ? (
+            <span>Loading...</span>
+          ) : (
+            <>
+              <Contact size={16} />
+              <span>Show Contact</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {contactData && (
+        <ContactModal
+          isOpen={contactModalOpen}
+          onClose={() => setContactModalOpen(false)}
+          contactNumber={contactData.contactNumber}
+          email={contactData.email}
+          name={contactData.name}
+        />
+      )}
+    </>
   );
 };
 
