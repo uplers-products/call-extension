@@ -1,4 +1,12 @@
 /* ============================================
+   GLOBAL ROOT FONT SIZE SETTING
+   ============================================ */
+/* Set html font-size to 10px so 1rem = 10px across all websites */
+html {
+    font-size: 10px !important;
+}
+
+/* ============================================
    GLOBAL CONTAINER & ROOT STYLES
    ============================================ */
 /* START: Global Container & Root Styles */
@@ -117,6 +125,20 @@ button.ext-custom-btn.ext-btn-contact:hover {
 
 button.ext-custom-btn:disabled {
     background-color: #888 !important;
+}
+
+/* Spinner animation for loading state */
+.ext-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* END: Call Button Component */
@@ -286,7 +308,15 @@ button.ext-custom-btn:disabled {
 .ext-controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 1.25rem;
+}
+
+/* Control Item Container - wraps button and label */
+.ext-control-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .ext-icon-btn {
@@ -304,6 +334,15 @@ button.ext-custom-btn:disabled {
 
 .ext-icon-btn:active {
     transform: scale(0.92);
+}
+
+/* Button Label Styles */
+.ext-control-label {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* Mute Button Styles */
@@ -329,6 +368,26 @@ button.ext-custom-btn:disabled {
 
 .btn-hangup:hover {
     background-color: #a30d12;
+}
+
+/* Close Button Styles */
+.btn-close {
+    background-color: #f3f2ef;
+    color: #555;
+}
+
+.btn-close:hover {
+    background-color: #e0e0e0;
+}
+
+/* Callback Button Styles */
+.btn-callback {
+    background-color: #057642;
+    color: white;
+}
+
+.btn-callback:hover {
+    background-color: #046136;
 }
 
 /* END: Call Widget Component */

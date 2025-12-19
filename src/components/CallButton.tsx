@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Phone, Contact } from 'lucide-react';
+import { Phone, Contact, Loader2 } from 'lucide-react';
 import type { RootState } from '../store/store';
 import { requestMicPermission } from '../common/Helpers';
 import { usePlivo } from '../context/PlivoContext';
@@ -47,7 +47,7 @@ const CallButton: React.FC = () => {
       const responseData = response.data as any;
 
       if (responseData?.status !== 'success' || !responseData?.data?.contact_number) {
-        toast.error('Unable to fetch contact details. Please try again.');
+        toast.error('Contact details not found.');
         return;
       }
 
@@ -84,7 +84,7 @@ const CallButton: React.FC = () => {
       const responseData = response.data as any;
 
       if (responseData?.status !== 'success') {
-        toast.error('Unable to fetch contact details. Please try again.');
+        toast.error('Contact details not found.');
         return;
       }
 
@@ -121,7 +121,10 @@ const CallButton: React.FC = () => {
           disabled={isDisabled}
         >
           {loading ? (
-            <span>Loading...</span>
+            <>
+              <Loader2 size={14} className="ext-spinner" />
+              <span>Finding contact info</span>
+            </>
           ) : (
             <>
               <Phone size={16} />
@@ -136,7 +139,10 @@ const CallButton: React.FC = () => {
           disabled={isDisabled}
         >
           {showContactLoading ? (
-            <span>Loading...</span>
+            <>
+              <Loader2 size={14} className="ext-spinner" />
+              <span>Finding contact info</span>
+            </>
           ) : (
             <>
               <Contact size={16} />

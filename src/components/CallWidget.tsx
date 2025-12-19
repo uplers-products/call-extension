@@ -135,40 +135,54 @@ const CallWidget: React.FC = () => {
                     <div className="ext-controls">
                         {isCalling ? (
                             <>
-                                <button
-                                    className={`ext-icon-btn ${isCallMuted ? 'btn-muted-active' : 'btn-mute'}`}
-                                    onClick={isCallMuted ? handleUnmute : handleMute}
-                                    disabled={isActionLoading}
-                                >
-                                    {isCallMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                                </button>
+                                <div className="ext-control-item">
+                                    <button
+                                        className={`ext-icon-btn ${isCallMuted ? 'btn-muted-active' : 'btn-mute'}`}
+                                        onClick={isCallMuted ? handleUnmute : handleMute}
+                                        disabled={isActionLoading}
+                                    >
+                                        {isCallMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                                    </button>
+                                    <span className="ext-control-label">
+                                        {isCallMuted ? 'Unmute' : 'Mute'}
+                                    </span>
+                                </div>
 
-                                <button
-                                    className="ext-icon-btn btn-hangup"
-                                    onClick={handleEndCall}
-                                    disabled={isActionLoading}
-                                >
-                                    <PhoneOff size={22} />
-                                </button>
+                                <div className="ext-control-item">
+                                    <button
+                                        className="ext-icon-btn btn-hangup"
+                                        onClick={handleEndCall}
+                                        disabled={isActionLoading}
+                                    >
+                                        <PhoneOff size={22} />
+                                    </button>
+                                    <span className="ext-control-label">End Call</span>
+                                </div>
                             </>
                         ) : (
                             <>
-                                <button
-                                    className="ext-icon-btn btn-close"
-                                    onClick={handleClosePopup}
-                                    disabled={isActionLoading}
-                                >
-                                    <X size={20} />
-                                </button>
-
-                                {showCallbackButton && (
+                                <div className="ext-control-item">
                                     <button
-                                        className="ext-icon-btn btn-callback"
-                                        onClick={handleCallback}
+                                        className="ext-icon-btn btn-close"
+                                        onClick={handleClosePopup}
                                         disabled={isActionLoading}
                                     >
-                                        <Phone size={20} />
+                                        <X size={20} />
                                     </button>
+                                    <span className="ext-control-label">Close</span>
+                                </div>
+
+                                {showCallbackButton && (
+                                    <div className="ext-control-item">
+                                        <button
+                                            className="ext-icon-btn btn-callback"
+                                            onClick={handleCallback}
+                                            disabled={isActionLoading}
+                                        >
+                                            <Phone size={20} />
+                                        </button>
+                                        <span className="ext-control-label">Call Back</span>
+                                    </div>
                                 )}
                             </>
                         )}

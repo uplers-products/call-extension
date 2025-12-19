@@ -1,4 +1,4 @@
-# LinkedIn Call Extension
+# Uplers Connect
 
 A Chrome extension that injects a **Call Button** into LinkedIn profile pages for one-click calling.
 

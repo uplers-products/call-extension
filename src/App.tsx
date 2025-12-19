@@ -11,6 +11,7 @@ import FloatingDialer from './components/FloatingDialer';
 const AppContent: React.FC = () => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
+  const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   // Check if current URL is a LinkedIn profile page (e.g., /in/username/)
@@ -55,17 +56,21 @@ const AppContent: React.FC = () => {
     return () => chrome.storage.onChanged.removeListener(handleStorageChange);
   }, [dispatch]);
 
-  // Inject call button only on LinkedIn profile pages
+  // Simple URL polling to detect LinkedIn SPA navigation
   useEffect(() => {
-    if (!isAuthenticated) {
-      const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
-      allWrappers.forEach((el) => el.remove());
-      setActiveNode(null);
-      return;
-    }
+    const checkUrl = () => {
+      if (window.location.href !== currentUrl) {
+        setCurrentUrl(window.location.href);
+      }
+    };
 
-    // Only inject on profile pages (URLs with /in/)
-    if (!isLinkedInProfilePage()) {
+    const interval = setInterval(checkUrl, 1000);
+    return () => clearInterval(interval);
+  }, [currentUrl]);
+
+  useEffect(() => { // Inject call button only on LinkedIn profile pages
+    // Only proceed if user is authenticated AND on a LinkedIn profile page
+    if (!isAuthenticated || !isLinkedInProfilePage()) {
       const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
       allWrappers.forEach((el) => el.remove());
       setActiveNode(null);
@@ -106,13 +111,14 @@ const AppContent: React.FC = () => {
       setActiveNode(prev => (prev === wrapper ? prev : wrapper));
     };
 
-    // Run aggressively (500ms) to handle LinkedIn's dynamic loading (Ember.js)
-    const interval = setInterval(refreshMountPoint, 500);
-    
-    return () => clearInterval(interval);
-  }, [isAuthenticated]);
+    // Run aggressively to handle LinkedIn's dynamic loading (Ember.js)
+    const interval = setInterval(refreshMountPoint, 1000);
 
-  // Only show CallButton when authenticated, nothing otherwise
+    return () => clearInterval(interval);
+  }, [isAuthenticated, currentUrl]);
+
+  // Show FloatingDialer on all pages when authenticated
+  // CallButton only shows on LinkedIn profile pages
   // Login status is handled via extension popup (click on extension icon)
   return (
     <>
