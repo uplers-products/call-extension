@@ -50,7 +50,7 @@ export interface InitiateCallPayload {
 }
 
 export interface RecordCallPayload {
-  call_id: string;
+  // call_id: string; // not required
   ats_call_id: string;
 }
 

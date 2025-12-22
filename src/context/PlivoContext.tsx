@@ -29,7 +29,7 @@ export const usePlivo = (): PlivoContextType => {
 export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { talentData, callId, callPopupOpen } = useSelector((state: RootState) => state.call);
+  const { talentData, callPopupOpen } = useSelector((state: RootState) => state.call);
 
   const plivoClientRef = useRef<any>(null);
   const atsCallIdRef = useRef<string>('');
@@ -75,13 +75,13 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     pusher.connection.bind('error', (err: any) => {
-      console.error('[Plivo] PUSHER connection error:', err);
+      console.log('[Plivo] PUSHER connection error:', err);
     });
 
     const channel = pusher.subscribe(PUSHER_CHANNEL);
 
     channel.bind('pusher:subscription_error', (err: any) => {
-      console.error('[Plivo] PUSHER subscription error:', err);
+      console.log('[Plivo] PUSHER subscription error:', err);
     });
 
     channel.bind(PUSHER_PROGRESS_EVENT, (data: PusherCallStatusData) => {
@@ -191,7 +191,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             // Get available microphone devices
             const micDevices = await audioDevices.availableDevices('audioinput');
             console.log('[Plivo] Available microphone devices:', micDevices);
-            
+
             // Set the default microphone if available
             if (micDevices && micDevices.length > 0) {
               const defaultMic = micDevices[0] as MediaDeviceInfo;
@@ -202,7 +202,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             // Get available speaker devices
             const speakerDevices = await audioDevices.availableDevices('audiooutput');
             console.log('[Plivo] Available speaker devices:', speakerDevices);
-            
+
             // Set the default speaker if available
             if (speakerDevices && speakerDevices.length > 0) {
               const defaultSpeaker = speakerDevices[0] as MediaDeviceInfo;
@@ -268,7 +268,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
 
         dispatch(startCall({ callId: callInfo.callUUID }));
-        recordCall(callInfo.callUUID);
+        recordCall();
         stopRinging();
         setIsCallMuted(false);
       });
@@ -290,7 +290,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Listen for audio device changes
       client.on('onAudioDeviceChange', async (deviceInfo: any) => {
         console.log('[Plivo] onAudioDeviceChange:', deviceInfo);
-        
+
         // Re-initialize microphone if device changes
         try {
           const audioDevices = plivoClient.client.audio;
@@ -354,9 +354,9 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Record Call
-  const recordCall = async (callUUID: string) => {
+  const recordCall = async () => {
     try {
-      const res = await recordPlivoCall({ call_id: callUUID, ats_call_id: atsCallIdRef.current });
+      const res = await recordPlivoCall({ ats_call_id: atsCallIdRef.current });
       console.log('[Plivo] recordCall:', res);
     } catch (error) {
       console.error('[Plivo] Error recording call:', error);
@@ -374,7 +374,7 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsActionLoading(true);
 
     try {
-      const res = await endPlivoCall({ call_id: callId || '' });
+      const res = await endPlivoCall({ call_id: atsCallIdRef.current });
 
       if (res?.status === 200) {
         if (plivoClientRef.current?.client) {
@@ -411,13 +411,16 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const handleClosePopup = () => {
-    if (plivoClientRef.current?.client) {
-      plivoClientRef.current.client.hangup();
-    }
+    // if (plivoClientRef.current?.client) {
+    //   plivoClientRef.current.client.hangup();
+    // }
 
     dispatch(closeCallPopup());
+    // setIsCallMuted(false);
+
+
     stopRinging();
-    setIsCallMuted(false);
+    handleEndCall();
   };
 
   // LOGS ---------------------------------------------------
