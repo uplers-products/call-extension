@@ -78,36 +78,80 @@ const AppContent: React.FC = () => {
     }
 
     const refreshMountPoint = () => {
+      // Early return optimization: Check if we already have a valid connected wrapper in DOM
+      const existingValidWrapper = document.querySelector('.ext-call-btn-wrapper.ext-pos-photo, .ext-call-btn-wrapper.ext-pos-body-left');
+      if (existingValidWrapper && existingValidWrapper.isConnected) {
+        // Only check for duplicates if we suspect there might be issues
+        const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
+        if (allWrappers.length > 1) {
+          allWrappers.forEach((el) => {
+            if (el !== existingValidWrapper) el.remove();
+          });
+        }
+        // Update state only if it changed
+        setActiveNode(prev => (prev === existingValidWrapper ? prev : existingValidWrapper as HTMLElement));
+        return; // Early return if wrapper is already valid
+      }
+
       // 1. Identify photo wrapper target on the LinkedIn page (check both possible classes)
       const photoWrapper = (document.querySelector('.pv-top-card__non-self-photo-wrapper') || document.querySelector('.pv-top-card__photo-wrapper')) as HTMLElement;
 
-      // If no photo wrapper found, clear the button and show browser alert
-      if (!photoWrapper) {
-        setActiveNode(null);
-        console.log('No photo wrapper found to inject the button');
+      // If photo wrapper found, use original injection method
+      if (photoWrapper) {
+        // Ensure parent has relative positioning for absolute positioning
+        if (getComputedStyle(photoWrapper).position === 'static') {
+          photoWrapper.style.position = 'relative';
+        }
+
+        let wrapper = photoWrapper.querySelector(':scope > .ext-call-btn-wrapper') as HTMLElement;
+
+        if (!wrapper || !wrapper.isConnected) {
+          wrapper = document.createElement('div');
+          wrapper.className = 'ext-call-btn-wrapper ext-pos-photo';
+          photoWrapper.appendChild(wrapper);
+        }
+
+        // Remove duplicate wrappers
+        const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
+        allWrappers.forEach((el) => {
+          if (el !== wrapper) el.remove();
+        });
+
+        // Update React State only if changed
+        setActiveNode(prev => (prev === wrapper ? prev : wrapper));
         return;
       }
 
-      // Ensure parent has relative positioning for absolute positioning
-      if (getComputedStyle(photoWrapper).position === 'static') {
-        photoWrapper.style.position = 'relative';
-      }
-
-      let wrapper = photoWrapper.querySelector(':scope > .ext-call-btn-wrapper') as HTMLElement;
+      // Fallback: If no photo wrapper found, inject into body (middle-left)
+      let wrapper: HTMLElement | null = document.querySelector('.ext-call-btn-wrapper.ext-pos-body-left') as HTMLElement;
 
       if (!wrapper || !wrapper.isConnected) {
         wrapper = document.createElement('div');
-        wrapper.className = 'ext-call-btn-wrapper ext-pos-photo';
-        photoWrapper.appendChild(wrapper);
+        wrapper.className = 'ext-call-btn-wrapper ext-pos-body-left';
+        
+        // Ensure body has relative positioning for absolute positioning
+        if (getComputedStyle(document.body).position === 'static') {
+          document.body.style.position = 'relative';
+        }
+        
+        // Check if wrapper already exists
+        const existingWrapper = document.body.querySelector('.ext-call-btn-wrapper.ext-pos-body-left');
+        if (!existingWrapper) {
+          document.body.appendChild(wrapper);
+        } else {
+          wrapper = existingWrapper as HTMLElement;
+        }
       }
 
-      // Remove duplicate wrappers
+      // Remove duplicate wrappers (including photo wrappers if any)
       const allWrappers = document.querySelectorAll('.ext-call-btn-wrapper');
-      allWrappers.forEach((el) => {
-        if (el !== wrapper) el.remove();
-      });
+      if (allWrappers.length > 1) {
+        allWrappers.forEach((el) => {
+          if (el !== wrapper) el.remove();
+        });
+      }
 
-      // 5. Update React State
+      // Update React State only if changed
       setActiveNode(prev => (prev === wrapper ? prev : wrapper));
     };
 

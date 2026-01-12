@@ -58,6 +58,20 @@
     /* Ensure it sits on top of the image and centered horizontally */
 }
 
+/* Position: Middle-left of LinkedIn profile body (fallback when photo wrapper not found) */
+.ext-pos-body-left {
+    position: absolute;
+    left: calc(var(--ext-unit) * 2);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    background: white;
+    padding: 2px 4px 4px 4px;
+    border-radius: 0px 12px 12px 0px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid #e0e0e0;
+}
+
 /* Position: Next to the Name Heading */
 .ext-pos-name {
     display: flex;
@@ -140,6 +154,7 @@ button.ext-custom-btn:disabled {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
