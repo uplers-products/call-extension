@@ -331,6 +331,9 @@ export const PlivoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const payload = {
         contact_number: talentData.contact_number || '',
+        page_url: window.location.href,
+        is_uplers_connect: true,
+        call_source: (talentData.call_source ?? 2) as 1 | 2,
       };
 
       const res = await initiatePlivoCall(payload);

@@ -87,7 +87,7 @@
     align-items: center !important;
 }
 
-/* Base button styling - LinkedIn green theme */
+/* Base button styling - Uplers Brand Yellow */
 button.ext-custom-btn {
     /* Reset & Layout */
     box-sizing: border-box !important;
@@ -96,9 +96,9 @@ button.ext-custom-btn {
     gap: 5px !important;
     margin: 0 !important;
 
-    /* Visuals - Standard LinkedIn Green */
-    background-color: #057642;
-    color: white !important;
+    /* Visuals - Uplers Primary Color */
+    background-color: #ffda30;
+    color: #000000 !important; /* Black text for contrast on yellow */
     border: none !important;
     border-radius: 16px !important;
     padding: 6px 14px !important;
@@ -118,31 +118,36 @@ button.ext-custom-btn {
 
 /* Explicit colors for button text */
 button.ext-custom-btn span {
-    color: white;
+    color: #000000;
 }
 
 button.ext-custom-btn:disabled span {
-    color: #e0e0e0;
+    color: #666666;
 }
 
 /* Button hover state */
 button.ext-custom-btn:hover {
-    background-color: #046136;
+    background-color: #e6c42b; /* Darker yellow */
     text-decoration: none;
 }
 
-/* Show Contact Button - LinkedIn blue theme */
+/* Show Contact Button - Secondary Action (Dark) */
 button.ext-custom-btn.ext-btn-contact {
-    background-color: #0a66c2;
-    /* LinkedIn Blue */
+    background-color: #333333;
+    color: #ffffff !important;
+}
+
+button.ext-custom-btn.ext-btn-contact span {
+    color: #ffffff;
 }
 
 button.ext-custom-btn.ext-btn-contact:hover {
-    background-color: #004182;
+    background-color: #000000;
 }
 
 button.ext-custom-btn:disabled {
-    background-color: #888 !important;
+    background-color: #e0e0e0 !important;
+    cursor: not-allowed !important;
 }
 
 /* Spinner animation for loading state */
@@ -198,9 +203,9 @@ button.ext-custom-btn:disabled {
 
 /* Widget Header Section */
 .ext-widget-header {
-    background-color: #0a66c2;
-    /* LinkedIn Blue */
-    color: white;
+    background-color: #ffda30;
+    /* Uplers Yellow */
+    color: #000000;
     padding: 10px 14px;
     display: flex;
     justify-content: space-between;
@@ -210,7 +215,7 @@ button.ext-custom-btn:disabled {
 }
 
 .ext-widget-header:hover {
-    background-color: #004182;
+    background-color: #e6c42b;
 }
 
 /* Header Text Elements */
@@ -224,22 +229,22 @@ button.ext-custom-btn:disabled {
     font-weight: 600;
     font-size: 14px;
     line-height: 1.2;
-    color: white;
+    color: #000000;
 }
 
 .ext-header-name span {
-    color: white;
+    color: #000000;
 }
 
 .ext-header-phone {
     font-weight: 400;
     font-size: 12px;
-    color: #ffffff;
+    color: #333333;
     margin-left: calc(var(--ext-unit) * 0.25);
 }
 
 .ext-header-phone span {
-    color: #ffffff;
+    color: #333333;
 }
 
 .ext-header-status {
@@ -249,21 +254,21 @@ button.ext-custom-btn:disabled {
     align-items: center;
     gap: 6px;
     font-weight: 400;
-    color: white;
+    color: #333333;
 }
 
 .ext-header-status span {
-    color: white;
+    color: #333333;
 }
 
 /* Pulsing Dot Indicator - shows call status */
 .ext-dot-indicator {
     width: 6px;
     height: 6px;
-    background-color: #4ade80;
+    background-color: #057642; /* Dark Green for status on yellow */
     border-radius: 50%;
     display: inline-block;
-    box-shadow: 0 0 4px #4ade80;
+    box-shadow: 0 0 4px #057642;
     animation: pulse 2s infinite;
 }
 
@@ -288,20 +293,20 @@ button.ext-custom-btn:disabled {
     align-items: center;
     gap: 10px;
     opacity: 0.8;
-    color: white;
+    color: #000000;
 }
 
 .ext-header-controls svg {
-    color: white;
+    color: #000000;
 }
 
 .ext-header-controls:hover {
     opacity: 1;
-    color: white;
+    color: #000000;
 }
 
 .ext-header-controls:hover svg {
-    color: white;
+    color: #000000;
 }
 
 /* Widget Body Section */
@@ -425,12 +430,12 @@ button.ext-custom-btn:disabled {
 
 /* Callback Button Styles */
 .btn-callback {
-    background-color: #057642;
-    color: white;
+    background-color: #ffda30;
+    color: #000000;
 }
 
 .btn-callback:hover {
-    background-color: #046136;
+    background-color: #e6c42b;
 }
 
 /* END: Call Widget Component */
@@ -442,37 +447,69 @@ button.ext-custom-btn:disabled {
    ============================================ */
 /* START: Floating Dialer Component */
 
-/* Floating Dialer Button - fixed position on right side */
-.ext-floating-dialer-btn {
+/* Floating Dialer Container - fixed position wrapper */
+.ext-floating-dialer-container {
     position: fixed;
     right: calc(var(--ext-unit) * 1.25);
     top: 50%;
     transform: translateY(-50%);
+    z-index: 2147483646;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Floating Dialer Button */
+.ext-floating-dialer-btn {
     width: calc(var(--ext-unit) * 3.5);
     height: calc(var(--ext-unit) * 3.5);
     border-radius: 50%;
-    background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
-    color: white;
+    background: #ffda30;
+    color: #000000;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 calc(var(--ext-unit) * 0.375) calc(var(--ext-unit) * 1) rgba(10, 102, 194, 0.4);
+    box-shadow: 0 calc(var(--ext-unit) * 0.375) calc(var(--ext-unit) * 1) rgba(0, 0, 0, 0.15);
     transition: all 0.25s ease;
-    z-index: 2147483646;
 }
 
 .ext-floating-dialer-btn:hover {
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 calc(var(--ext-unit) * 0.5) calc(var(--ext-unit) * 1.5) rgba(10, 102, 194, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 calc(var(--ext-unit) * 0.5) calc(var(--ext-unit) * 1.5) rgba(0, 0, 0, 0.2);
+    background-color: #e6c42b;
 }
 
 .ext-floating-dialer-btn:disabled {
-    background: #888;
+    background: #e0e0e0;
+    color: #888;
     cursor: not-allowed;
-    transform: translateY(-50%);
+    transform: none;
     box-shadow: none;
+}
+
+/* Tooltip for Shortcut */
+.ext-floating-dialer-tooltip {
+    position: absolute;
+    right: calc(100% + 15px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.ext-floating-dialer-container:hover .ext-floating-dialer-tooltip {
+    opacity: 1;
 }
 
 /* Dialer Modal Overlay - full screen backdrop */
@@ -568,7 +605,7 @@ button.ext-custom-btn:disabled {
 }
 
 .ext-dialer-modal .ext-dialer-input:focus {
-    box-shadow: inset 0 calc(var(--ext-unit) * 0.125) calc(var(--ext-unit) * 0.25) rgba(0, 0, 0, 0.3), 0 0 0 calc(var(--ext-unit) * 0.125) rgba(10, 102, 194, 0.4);
+    box-shadow: inset 0 calc(var(--ext-unit) * 0.125) calc(var(--ext-unit) * 0.25) rgba(0, 0, 0, 0.3), 0 0 0 calc(var(--ext-unit) * 0.125) rgba(255, 218, 48, 0.4);
 }
 
 /* Dialer Backspace Button */
@@ -651,8 +688,8 @@ button.ext-custom-btn:disabled {
 .ext-dialer-modal .ext-dialer-call-btn {
     width: 100%;
     padding: calc(var(--ext-unit) * 1.25);
-    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
-    color: white;
+    background: #ffda30;
+    color: #000000;
     border: none;
     border-radius: calc(var(--ext-unit) * 0.75);
     font-size: calc(var(--ext-unit) * 1.25);
@@ -663,11 +700,11 @@ button.ext-custom-btn:disabled {
     justify-content: center;
     gap: calc(var(--ext-unit) * 0.75);
     transition: all 0.2s ease;
-    box-shadow: 0 calc(var(--ext-unit) * 0.25) calc(var(--ext-unit) * 0.75) rgba(0, 200, 83, 0.3);
+    box-shadow: 0 calc(var(--ext-unit) * 0.25) calc(var(--ext-unit) * 0.75) rgba(255, 218, 48, 0.3);
 }
 
 .ext-dialer-modal .ext-dialer-call-btn span {
-    color: white;
+    color: #000000;
 }
 
 .ext-dialer-modal .ext-dialer-call-btn:disabled span {
@@ -676,7 +713,8 @@ button.ext-custom-btn:disabled {
 
 .ext-dialer-modal .ext-dialer-call-btn:hover {
     transform: translateY(calc(var(--ext-unit) * -0.125));
-    box-shadow: 0 calc(var(--ext-unit) * 0.375) calc(var(--ext-unit) * 1) rgba(0, 200, 83, 0.4);
+    box-shadow: 0 calc(var(--ext-unit) * 0.375) calc(var(--ext-unit) * 1) rgba(255, 218, 48, 0.4);
+    background-color: #e6c42b;
 }
 
 .ext-dialer-modal .ext-dialer-call-btn:disabled {
@@ -685,6 +723,22 @@ button.ext-custom-btn:disabled {
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
+}
+
+/* Footer Hint */
+.ext-dialer-footer {
+    margin-top: calc(var(--ext-unit) * 1.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #555;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.ext-dialer-keyboard-icon {
+    opacity: 0.5;
 }
 
 /* END: Floating Dialer Component */
@@ -801,13 +855,14 @@ button.ext-custom-btn:disabled {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background-color: #0a66c2;
-    color: white;
+    background-color: #ffda30; /* Uplers Yellow */
+    color: #000000;
     flex-shrink: 0;
 }
 
 .ext-contact-unavailable .ext-contact-icon {
     background-color: #888;
+    color: white;
 }
 
 /* Contact Details Container */

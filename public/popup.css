@@ -18,8 +18,8 @@ body {
 }
 
 .popup-header {
-  background-color: #0a66c2;
-  color: white;
+  background-color: #ffda30; /* Uplers Yellow */
+  color: #000000;
   padding: 1rem;
   text-align: center;
 }
@@ -86,8 +86,9 @@ body {
 
 .user-info {
   font-size: 0.8125rem;
-  color: #0a66c2;
+  color: #333333;
   word-break: break-all;
+  font-weight: 500;
 }
 
 /* Buttons */
@@ -103,12 +104,12 @@ body {
 }
 
 .btn-primary {
-  background-color: #0a66c2;
-  color: white;
+  background-color: #ffda30;
+  color: #000000;
 }
 
 .btn-primary:hover {
-  background-color: #004182;
+  background-color: #e6c42b;
 }
 
 .btn-secondary {
@@ -126,7 +127,7 @@ body {
   width: 2rem;
   height: 2rem;
   border: 0.1875rem solid #e0e0e0;
-  border-top-color: #0a66c2;
+  border-top-color: #ffda30;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

@@ -58,6 +58,7 @@ const CallButton: React.FC = () => {
         name,
         photoUrl,
         contact_number,
+        call_source: 2,
       });
 
     } catch (e) {
@@ -155,7 +156,10 @@ const CallButton: React.FC = () => {
       {contactData && (
         <ContactModal
           isOpen={contactModalOpen}
-          onClose={() => setContactModalOpen(false)}
+          onClose={() => {
+            setContactModalOpen(false);
+            setContactData(null);
+          }}
           contactNumber={contactData.contactNumber}
           email={contactData.email}
           name={contactData.name}

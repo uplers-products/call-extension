@@ -13,6 +13,10 @@ const AppContent: React.FC = () => {
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { callPopupOpen, callStatus } = useSelector((state: RootState) => state.call);
+
+  const isCallInProgress =
+    callPopupOpen && callStatus !== 'idle' && callStatus !== 'ended' && callStatus !== 'failed';
 
   // Check if current URL is a LinkedIn profile page (e.g., /in/username/)
   const isLinkedInProfilePage = (): boolean => {
@@ -67,6 +71,21 @@ const AppContent: React.FC = () => {
     const interval = setInterval(checkUrl, 1000);
     return () => clearInterval(interval);
   }, [currentUrl]);
+
+  // Warn if user tries to reload/close/navigate away during an active call
+  useEffect(() => {
+    if (!isCallInProgress) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Chrome ignores custom text; setting returnValue is still required to trigger the prompt.
+      e.returnValue = 'A call is in progress. Are you sure you want to leave this page?';
+      return e.returnValue;
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isCallInProgress]);
 
   useEffect(() => { // Inject call button only on LinkedIn profile pages
     // Only proceed if user is authenticated AND on a LinkedIn profile page
@@ -170,7 +189,7 @@ const AppContent: React.FC = () => {
         <PlivoProvider>
           <CallWidget />
           <FloatingDialer />
-          {activeNode && activeNode.isConnected && createPortal(<CallButton />, activeNode)}
+          {activeNode && activeNode.isConnected && createPortal(<CallButton key={currentUrl} />, activeNode)}
         </PlivoProvider>
       )}
     </>

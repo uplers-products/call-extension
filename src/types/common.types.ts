@@ -24,6 +24,7 @@ export interface TalentData {
   contact_number?: string;
   hr_id?: string;
   talent_id?: string;
+  call_source?: 1 | 2;
 }
 
 // Call State Interface
@@ -47,6 +48,9 @@ export interface ApiResponse<T = unknown> {
 
 export interface InitiateCallPayload {
   contact_number: string;
+  page_url: string;
+  is_uplers_connect: boolean;
+  call_source: 1 | 2;
 }
 
 export interface RecordCallPayload {

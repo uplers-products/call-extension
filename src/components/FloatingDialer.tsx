@@ -14,6 +14,25 @@ const FloatingDialer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Keyboard shortcut to toggle dialer
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for CTRL + SHIFT + D or CMD + SHIFT + D
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'd') {
+        event.preventDefault();
+        // Prevent opening if already in a call or call popup is open (unless closing)
+        if (!isOpen && (isCalling || callPopupOpen)) return;
+        
+        setIsOpen(prev => !prev);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, isCalling, callPopupOpen]);
+
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
@@ -55,6 +74,7 @@ const FloatingDialer: React.FC = () => {
         name: phoneNumber,
         photoUrl: '',
         contact_number: phoneNumber,
+        call_source: 1,
       });
 
       setIsOpen(false);
@@ -83,6 +103,9 @@ const FloatingDialer: React.FC = () => {
       },
     },
   };
+  
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const shortcutText = isMac ? '⌘ + ⇧ + D' : 'Ctrl + Shift + D';
 
   return (
     <>
@@ -99,14 +122,20 @@ const FloatingDialer: React.FC = () => {
       )}
 
       {/* Floating CTA Button */}
-      <button
-        className="ext-floating-dialer-btn"
-        onClick={() => setIsOpen(true)}
-        disabled={isCalling || callPopupOpen}
-        title="Open Dialer"
-      >
-        <Phone size={20} />
-      </button>
+      <div className="ext-floating-dialer-container">
+        <button
+          className="ext-floating-dialer-btn"
+          onClick={() => setIsOpen(true)}
+          disabled={isCalling || callPopupOpen}
+          title={`Open Dialer (${shortcutText})`}
+        >
+          <Phone size={20} />
+        </button>
+        {/* Tooltip for shortcut */}
+        <div className="ext-floating-dialer-tooltip">
+            {shortcutText}
+        </div>
+      </div>
 
       {/* Dialer Modal */}
       {isOpen && (
@@ -125,7 +154,7 @@ const FloatingDialer: React.FC = () => {
           <div className="ext-dialer-modal" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
             <div className="ext-dialer-header">
-              <span>Direct Dial</span>
+              <span>Uplers Connect</span>
               <button className="ext-dialer-close" onClick={() => setIsOpen(false)}>
                 <X size={18} />
               </button>
@@ -186,6 +215,11 @@ const FloatingDialer: React.FC = () => {
               <Phone size={20} />
               <span>{isLoading ? 'Checking...' : 'Call'}</span>
             </button>
+            
+            {/* Shortcut Hint Footer */}
+            <div className="ext-dialer-footer">
+                <span style={{color: '#969696'}}>{shortcutText} to toggle</span>
+            </div>
           </div>
         </div>
       )}
