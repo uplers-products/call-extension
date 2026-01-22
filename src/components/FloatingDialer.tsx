@@ -54,6 +54,13 @@ const FloatingDialer: React.FC = () => {
     setPhoneNumber(value);
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    const cleanedValue = pastedText.replace(/\D/g, '').slice(0, 10);
+    setPhoneNumber(cleanedValue);
+  };
+
   const handleCall = async () => {
     if (phoneNumber.length !== 10 || isCalling || callPopupOpen || isLoading) return;
 
@@ -167,6 +174,7 @@ const FloatingDialer: React.FC = () => {
                 type="tel"
                 value={phoneNumber}
                 onChange={handleInputChange}
+                onPaste={handlePaste}
                 placeholder="Enter 10 digit number"
                 className="ext-dialer-input"
                 maxLength={10}
