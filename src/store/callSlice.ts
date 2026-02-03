@@ -13,6 +13,8 @@ const initialState: CallState = {
   callStatus: 'idle',
   callMessage: '',
   callPopupOpen: false,
+  whatsappModalOpen: false,
+  wasCallEverConnected: false,
 };
 
 const callSlice = createSlice({
@@ -25,19 +27,28 @@ const callSlice = createSlice({
       state.isMinimized = false;
       state.callStatus = 'acquiring';
       state.callMessage = '';
+      state.whatsappModalOpen = false;
+      state.wasCallEverConnected = false;
     },
     startCall: (state, action: PayloadAction<{ callId: string }>) => {
       state.isCalling = true;
       state.callId = action.payload.callId;
       state.callStatus = 'connected';
+      state.whatsappModalOpen = false;
+      state.wasCallEverConnected = true;
     },
     setAtsCallId: (state, action: PayloadAction<string>) => {
       state.atsCallId = action.payload;
     },
     setCallStatus: (state, action: PayloadAction<{ status: CallStatus; message?: string }>) => {
-      state.callStatus = action.payload.status;
+      const status = action.payload.status;
+      state.callStatus = status;
       if (action.payload.message !== undefined) {
         state.callMessage = action.payload.message;
+      }
+      const preConnectStatuses: CallStatus[] = ['acquiring', 'initiating', 'connecting', 'calling'];
+      if (preConnectStatuses.includes(status)) {
+        state.wasCallEverConnected = false;
       }
     },
     endCall: (state) => {
@@ -55,25 +66,35 @@ const callSlice = createSlice({
       state.atsCallId = null;
       state.callStatus = 'idle';
       state.callMessage = '';
+      state.whatsappModalOpen = false;
+      state.wasCallEverConnected = false;
     },
     toggleMinimize: (state) => {
       state.isMinimized = !state.isMinimized;
     },
     setMinimized: (state, action: PayloadAction<boolean>) => {
       state.isMinimized = action.payload;
+    },
+    openWhatsappModal: (state) => {
+      state.whatsappModalOpen = true;
+    },
+    closeWhatsappModal: (state) => {
+      state.whatsappModalOpen = false;
     }
   }
 });
 
-export const { 
+export const {
   openCallPopup,
-  startCall, 
+  startCall,
   setAtsCallId,
   setCallStatus,
-  endCall, 
+  endCall,
   closeCallPopup,
   toggleMinimize,
-  setMinimized
+  setMinimized,
+  openWhatsappModal,
+  closeWhatsappModal
 } = callSlice.actions;
 
 export default callSlice.reducer;

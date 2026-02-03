@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store, { type RootState } from './store/store';
 import { setAuth, clearAuth, setLoading } from './store/authSlice';
+import { closeWhatsappModal, openWhatsappModal } from './store/callSlice';
 import { PlivoProvider } from './context/PlivoContext';
 import CallWidget from './components/CallWidget';
 import CallButton from './components/CallButton';
 import FloatingDialer from './components/FloatingDialer';
+import WhatsappModal from './components/WhatsappModal';
 
 const AppContent: React.FC = () => {
   const dispatch = useDispatch();
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { callPopupOpen, callStatus } = useSelector((state: RootState) => state.call);
+  const { callPopupOpen, callStatus, talentData, whatsappModalOpen, wasCallEverConnected } = useSelector((state: RootState) => state.call);
+  console.log('wasCallEverConnected :', wasCallEverConnected);
 
   const isCallInProgress =
     callPopupOpen && callStatus !== 'idle' && callStatus !== 'ended' && callStatus !== 'failed';
@@ -86,6 +89,27 @@ const AppContent: React.FC = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isCallInProgress]);
+
+  // Open WhatsApp modal once, when the call transitions to "ended"
+  const prevCallStatusRef = useRef(callStatus);
+  useEffect(() => {
+    if (
+      prevCallStatusRef.current !== 'ended' &&
+      callStatus === 'ended' &&
+      talentData &&
+      !whatsappModalOpen
+    ) {
+      dispatch(openWhatsappModal());
+    }
+    prevCallStatusRef.current = callStatus;
+  }, [callStatus, dispatch, talentData, whatsappModalOpen]);
+
+  // If call moves away from "ended" (e.g., callback), auto-close WhatsApp modal
+  useEffect(() => {
+    if (whatsappModalOpen && callStatus !== 'ended') {
+      dispatch(closeWhatsappModal());
+    }
+  }, [callStatus, dispatch, whatsappModalOpen]);
 
   useEffect(() => { // Inject call button only on LinkedIn profile pages
     // Only proceed if user is authenticated AND on a LinkedIn profile page
@@ -188,6 +212,7 @@ const AppContent: React.FC = () => {
       {isAuthenticated && (
         <PlivoProvider>
           <CallWidget />
+          <WhatsappModal isOpen={whatsappModalOpen} talent={talentData} />
           <FloatingDialer />
           {activeNode && activeNode.isConnected && createPortal(<CallButton key={currentUrl} />, activeNode)}
         </PlivoProvider>
