@@ -37,6 +37,8 @@ export interface CallState {
   callStatus: CallStatus;
   callMessage: string;
   callPopupOpen: boolean;
+  whatsappModalOpen: boolean;
+  wasCallEverConnected: boolean;
 }
 
 // API Types

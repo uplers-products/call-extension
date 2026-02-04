@@ -891,3 +891,501 @@ button.ext-custom-btn:disabled {
 }
 
 /* END: Contact Modal Component */
+
+
+/* ============================================
+   WHATSAPP MODAL COMPONENT
+   Component: WhatsappModal.tsx
+   Isolated so it looks the same on all pages (like Call Widget).
+   ============================================ */
+/* START: WhatsApp Modal Component */
+
+/* Isolation: reset host page influence. Design: 1rem = 10px (--ext-unit) */
+#ext-whatsapp-modal-root {
+    all: initial;
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    line-height: 1.5;
+    color: #232323;
+    box-sizing: border-box;
+    pointer-events: auto;
+    --ext-unit: 10px;
+}
+
+#ext-whatsapp-modal-root *,
+#ext-whatsapp-modal-root *::before,
+#ext-whatsapp-modal-root *::after {
+    box-sizing: border-box;
+}
+
+/* Reset common elements so host page styles do not leak in */
+#ext-whatsapp-modal-root input,
+#ext-whatsapp-modal-root select,
+#ext-whatsapp-modal-root button,
+#ext-whatsapp-modal-root textarea,
+#ext-whatsapp-modal-root label {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+}
+
+#ext-whatsapp-modal-root button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+#ext-whatsapp-modal-root ul,
+#ext-whatsapp-modal-root li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#ext-whatsapp-modal-root.ext-whatsapp-scope {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+}
+
+/* Scoped modal overlay/content - centered, fixed width in px ( !important to beat host page ) */
+#ext-whatsapp-modal-root .ReactModal__Overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(2px);
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+#ext-whatsapp-modal-root .ReactModal__Content {
+    background: #ffffff !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 600px !important;
+    max-width: calc(100vw - 40px) !important;
+    max-height: 80vh !important;
+    height: 80vh !important;
+    overflow: visible !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* margin-left: 0 !important; */
+}
+
+#ext-whatsapp-modal-root .commanModalHeader {
+    padding: 20px 20px 10px;
+    position: relative;
+    top: 0;
+    z-index: 3;
+    background: #ffffff;
+    padding-right: 40px;
+    border-radius: 12px 12px 0 0;
+}
+
+#ext-whatsapp-modal-root .commanModalHeader::before {
+    content: '';
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid #cecccc;
+    position: absolute;
+    pointer-events: none;
+}
+
+#ext-whatsapp-modal-root .commanModalAction {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    left: auto;
+    z-index: 4;
+}
+
+#ext-whatsapp-modal-root .modal-close-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#ext-whatsapp-modal-root .modal-close-btn svg {
+    transition: all 0.5s ease 0s;
+}
+
+#ext-whatsapp-modal-root .modal-close-btn:hover svg {
+    transform: rotate(180deg);
+}
+
+#ext-whatsapp-modal-root .previewModalTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px 16px;
+    flex-wrap: wrap;
+}
+
+#ext-whatsapp-modal-root .previewModalTitle h2 {
+    margin: 0;
+    color: #232323;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#ext-whatsapp-modal-root .addNoteHeadFetList {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #004a6a;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+}
+
+#ext-whatsapp-modal-root .addNoteHeadFetList li {
+    align-items: center;
+    border-right: 1px solid #004a6a;
+    padding-right: 16px;
+    gap: 4px;
+    display: inline-flex;
+}
+
+#ext-whatsapp-modal-root .addNoteHeadFetList li:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+#ext-whatsapp-modal-root .addNoteHeadFetList li svg {
+    margin-right: 4px;
+}
+
+#ext-whatsapp-modal-root .modal-container {
+    padding: 15px 20px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#ext-whatsapp-modal-root .emailBoxWarp {
+    border-radius: 14px;
+    background: #f8f9ff;
+}
+
+#ext-whatsapp-modal-root .emailBoxHead {
+    border: 1px solid #bcc0e0;
+    gap: 0 16px;
+    padding: 13px 16px 13px 24px;
+    border-radius: 14px;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+#ext-whatsapp-modal-root .emailBoxHead.openEmailBox {
+    border-color: transparent;
+    border-bottom-color: #bcc0e0;
+    border-radius: 14px 14px 0 0;
+}
+
+#ext-whatsapp-modal-root .emailBoxHead > h3 {
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 13px;
+    color: #231f20;
+    margin: 0;
+}
+
+#ext-whatsapp-modal-root .emailBoxBody {
+    padding: 15px;
+    border-radius: 0 0 14px 14px;
+}
+
+#ext-whatsapp-modal-root .chooseEmailTemp {
+    padding: 10px;
+    background: #e3e6fe;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+#ext-whatsapp-modal-root .emailBoxBody .chooseEmailTemp .form-group {
+    margin-bottom: 0;
+    gap: 8px 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+#ext-whatsapp-modal-root .selectEmailTemp {
+    flex: 1;
+    position: relative;
+}
+
+#ext-whatsapp-modal-root .helpText {
+    margin-top: 8px;
+    font-size: 10px;
+    line-height: 12px;
+    color: rgba(107, 107, 107, 0.8);
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#ext-whatsapp-modal-root .emailBoxBodyInner {
+    padding: 10px;
+    border: 1px solid #bcc0e0;
+    border-radius: 10px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#ext-whatsapp-modal-root .emailBoxBodyInner .form-group {
+    margin-bottom: 0;
+}
+
+#ext-whatsapp-modal-root .form-group {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+#ext-whatsapp-modal-root .mb-0 {
+    margin-bottom: 0 !important;
+}
+
+#ext-whatsapp-modal-root .form-group > label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #232323;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 500;
+}
+
+#ext-whatsapp-modal-root .form-group > label span {
+    color: #b60707;
+    font-weight: 700;
+}
+
+#ext-whatsapp-modal-root .form-control {
+    border: 1px solid #cecccc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 500;
+    color: #232323;
+    background: #ffffff;
+    width: 100%;
+    outline: none;
+    box-shadow: none;
+    display: block;
+}
+
+#ext-whatsapp-modal-root textarea.form-control {
+    min-height: 55px;
+    resize: vertical;
+}
+
+#ext-whatsapp-modal-root .rsw-editor.ext-wysiwyg {
+    border: 1px solid #cecccc;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+#ext-whatsapp-modal-root .rsw-editor.ext-wysiwyg .rsw-toolbar {
+    border: none;
+    border-bottom: 1px solid #cecccc;
+    background: #f7f7f7;
+    padding: 6px;
+}
+
+#ext-whatsapp-modal-root .rsw-editor.ext-wysiwyg .rsw-toolbar button {
+    border-radius: 6px;
+}
+
+#ext-whatsapp-modal-root .rsw-editor.ext-wysiwyg .rsw-ce {
+    padding: 10px 14px;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 500;
+    color: #232323;
+    min-height: 110px;
+}
+
+#ext-whatsapp-modal-root .emailTempHead {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+#ext-whatsapp-modal-root .emailTempHead .addActionBtn {
+    align-items: center;
+    gap: 16px;
+    display: inline-flex;
+}
+
+#ext-whatsapp-modal-root .addBtn {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 11px;
+    color: #384ad7;
+    text-decoration: underline;
+    transition: all 0.25s ease 0s;
+    white-space: nowrap;
+}
+
+#ext-whatsapp-modal-root .addBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#ext-whatsapp-modal-root .commanModalFooter {
+    border-top: 1px solid #cecccc;
+    padding: 15px 20px;
+    border-radius: 0 0 12px 12px;
+    justify-content: flex-end;
+    align-items: center;
+    display: flex;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: #ffffff;
+    gap: 10px 20px;
+    flex-wrap: wrap;
+}
+
+#ext-whatsapp-modal-root .modalActionBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#ext-whatsapp-modal-root .btnPrimary {
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    background: #232323;
+    color: #ffffff;
+    border: 1px solid #232323;
+    border-radius: 25px;
+    transition: all 0.35s ease 0s;
+    cursor: pointer;
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+#ext-whatsapp-modal-root .btnPrimary:disabled {
+    color: rgba(35, 35, 35, 0.2);
+    background: rgba(186, 186, 186, 0.2);
+    border-color: rgba(186, 186, 186, 0.2);
+    cursor: not-allowed;
+}
+
+#ext-whatsapp-modal-root .btnPrimary.brdBtnPrimary {
+    background: #ffffff;
+    color: #232323;
+}
+
+#ext-whatsapp-modal-root .backBtn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none;
+    text-decoration: underline;
+    color: #6b6b6b;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.35s ease 0s;
+    white-space: nowrap;
+}
+
+#ext-whatsapp-modal-root .backBtn:hover {
+    text-decoration: none;
+    color: #232323;
+}
+
+#ext-whatsapp-modal-root .sendEmailNowAction {
+    display: inline-flex;
+    position: relative;
+}
+
+/* WhatsApp variant: no split button divider; keep pill button */
+#ext-whatsapp-modal-root .sendWhatsappModal .sendEmailNowAction::before {
+    content: none;
+}
+
+#ext-whatsapp-modal-root .sendWhatsappModal .sendEmailNowAction .btnPrimary {
+    padding: 8px 16px;
+    border-radius: 25px;
+}
+
+/* Preview modal layer (scoped) */
+#ext-whatsapp-modal-root .ext-preview-modal-layer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
+}
+
+#ext-whatsapp-modal-root .ext-preview-modal {
+    width: 600px;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+#ext-whatsapp-modal-root .ext-preview-modal .modal-container {
+    height: auto;
+    max-height: calc(100vh - 120px);
+}
+
+/* END: WhatsApp Modal Component */
