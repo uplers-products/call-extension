@@ -98,7 +98,8 @@ button.ext-custom-btn {
 
     /* Visuals - Uplers Primary Color */
     background-color: #ffda30;
-    color: #000000 !important; /* Black text for contrast on yellow */
+    color: #000000 !important;
+    /* Black text for contrast on yellow */
     border: none !important;
     border-radius: 16px !important;
     padding: 6px 14px !important;
@@ -127,7 +128,8 @@ button.ext-custom-btn:disabled span {
 
 /* Button hover state */
 button.ext-custom-btn:hover {
-    background-color: #e6c42b; /* Darker yellow */
+    background-color: #e6c42b;
+    /* Darker yellow */
     text-decoration: none;
 }
 
@@ -265,7 +267,8 @@ button.ext-custom-btn:disabled {
 .ext-dot-indicator {
     width: 6px;
     height: 6px;
-    background-color: #057642; /* Dark Green for status on yellow */
+    background-color: #057642;
+    /* Dark Green for status on yellow */
     border-radius: 50%;
     display: inline-block;
     box-shadow: 0 0 4px #057642;
@@ -505,7 +508,7 @@ button.ext-custom-btn:disabled {
     pointer-events: none;
     transition: opacity 0.2s;
     font-weight: 500;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .ext-floating-dialer-container:hover .ext-floating-dialer-tooltip {
@@ -855,7 +858,8 @@ button.ext-custom-btn:disabled {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background-color: #ffda30; /* Uplers Yellow */
+    background-color: #ffda30;
+    /* Uplers Yellow */
     color: #000000;
     flex-shrink: 0;
 }
@@ -1083,28 +1087,29 @@ button.ext-custom-btn:disabled {
     overflow-y: auto;
 }
 
-/* #ext-whatsapp-modal-root .emailBoxWarp {
-    border-radius: 14px;
-    background: #f8f9ff;
-} */
+#ext-whatsapp-modal-root .emailBoxWarp {
+    border-radius: 0;
+    background: none;
+}
 
 #ext-whatsapp-modal-root .emailBoxHead {
-    /* border: 1px solid #bcc0e0; */
-    gap: 0 16px;
-    /* padding: 13px 16px 13px 24px; */
-    /* border-radius: 14px; */
+    border: none;
+    padding: 0;
+    gap: 0;
     justify-content: space-between;
     align-items: center;
     display: flex;
+    margin-bottom: 0;
 }
 
-/* #ext-whatsapp-modal-root .emailBoxHead.openEmailBox {
-    border-color: transparent;
+#ext-whatsapp-modal-root .emailBoxHead.openEmailBox {
+    /* border-color: transparent;
     border-bottom-color: #bcc0e0;
-    border-radius: 14px 14px 0 0;
-} */
+    border-radius: 14px 14px 0 0; */
+    border: none;
+}
 
-#ext-whatsapp-modal-root .emailBoxHead > h3 {
+#ext-whatsapp-modal-root .emailBoxHead>h3 {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 11px;
     font-weight: 600;
@@ -1114,6 +1119,7 @@ button.ext-custom-btn:disabled {
 }
 
 #ext-whatsapp-modal-root .emailBoxBody {
+    padding: 0;
     padding-top: 15px;
     border-radius: 0 0 14px 14px;
 }
@@ -1169,7 +1175,7 @@ button.ext-custom-btn:disabled {
     margin-bottom: 0 !important;
 }
 
-#ext-whatsapp-modal-root .form-group > label {
+#ext-whatsapp-modal-root .form-group>label {
     display: inline-block;
     margin-bottom: 8px;
     color: #232323;
@@ -1179,7 +1185,7 @@ button.ext-custom-btn:disabled {
     font-weight: 500;
 }
 
-#ext-whatsapp-modal-root .form-group > label span {
+#ext-whatsapp-modal-root .form-group>label span {
     color: #b60707;
     font-weight: 700;
 }
