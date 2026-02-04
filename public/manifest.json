@@ -42,7 +42,8 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "images/*"
+                "images/*",
+                "audio/*"
             ],
             "matches": [
                 "<all_urls>"

@@ -13,5 +13,8 @@ export const API_RECORD_PLIVO_CALL: string = RA_APP_URL + 'job-candidates/plivio
 export const PUSHER_APP_KEY: string = import.meta.env.VITE_PUSHER_APP_KEY || '';
 export const PUSHER_APP_CLUSTER: string = import.meta.env.VITE_PUSHER_APP_CLUSTER || 'ap2';
 
-// Audio
-export const RING_TONE_URL: string = 'https://cdn.plivo.com/sdk/browser/audio/us-ring.mp3';
+// Audio – use extension asset when available, else CDN fallback
+export const RING_TONE_URL: string =
+  typeof chrome !== 'undefined' && chrome.runtime?.getURL
+    ? chrome.runtime.getURL('audio/us-ring.mp3')
+    : 'https://cdn.plivo.com/sdk/browser/audio/us-ring.mp3';
