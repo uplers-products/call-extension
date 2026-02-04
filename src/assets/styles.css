@@ -953,6 +953,7 @@ button.ext-custom-btn:disabled {
     inset: 0;
     z-index: 2147483647;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 11px;
 }
 
 /* Scoped modal overlay/content - centered, fixed width in px ( !important to beat host page ) */
@@ -980,7 +981,7 @@ button.ext-custom-btn:disabled {
     position: relative !important;
     display: flex !important;
     flex-direction: column !important;
-    margin-left: 0 !important;
+    /* margin-left: 0 !important; */
 }
 
 #ext-whatsapp-modal-root .commanModalHeader {
@@ -1038,8 +1039,8 @@ button.ext-custom-btn:disabled {
 #ext-whatsapp-modal-root .previewModalTitle h2 {
     margin: 0;
     color: #232323;
-    font-size: 14px;
-    line-height: 18px;
+    font-size: 16px;
+    line-height: 20px;
     font-weight: 600;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -1049,8 +1050,8 @@ button.ext-custom-btn:disabled {
     padding: 0;
     list-style: none;
     color: #004a6a;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -1105,9 +1106,9 @@ button.ext-custom-btn:disabled {
 
 #ext-whatsapp-modal-root .emailBoxHead > h3 {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 600;
-    line-height: 11px;
+    line-height: 13px;
     color: #231f20;
     margin: 0;
 }
@@ -1139,8 +1140,8 @@ button.ext-custom-btn:disabled {
 
 #ext-whatsapp-modal-root .helpText {
     margin-top: 8px;
-    font-size: 8px;
-    line-height: 10px;
+    font-size: 10px;
+    line-height: 12px;
     color: rgba(107, 107, 107, 0.8);
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -1173,8 +1174,8 @@ button.ext-custom-btn:disabled {
     margin-bottom: 8px;
     color: #232323;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 500;
 }
 
@@ -1188,8 +1189,8 @@ button.ext-custom-btn:disabled {
     border-radius: 8px;
     padding: 10px 14px;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 500;
     color: #232323;
     background: #ffffff;
@@ -1225,8 +1226,8 @@ button.ext-custom-btn:disabled {
 #ext-whatsapp-modal-root .rsw-editor.ext-wysiwyg .rsw-ce {
     padding: 10px 14px;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 500;
     color: #232323;
     min-height: 110px;
@@ -1257,9 +1258,9 @@ button.ext-custom-btn:disabled {
     align-items: center;
     gap: 6px;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 7px;
+    font-size: 9px;
     font-weight: 500;
-    line-height: 9px;
+    line-height: 11px;
     color: #384ad7;
     text-decoration: underline;
     transition: all 0.25s ease 0s;
@@ -1275,7 +1276,7 @@ button.ext-custom-btn:disabled {
     border-top: 1px solid #cecccc;
     padding: 15px 20px;
     border-radius: 0 0 12px 12px;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     display: flex;
     position: sticky;
@@ -1294,8 +1295,8 @@ button.ext-custom-btn:disabled {
 
 #ext-whatsapp-modal-root .btnPrimary {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 600;
     padding: 8px 20px;
     background: #232323;
@@ -1308,6 +1309,7 @@ button.ext-custom-btn:disabled {
     display: inline-flex;
     gap: 8px;
     white-space: nowrap;
+    text-transform: uppercase;
 }
 
 #ext-whatsapp-modal-root .btnPrimary:disabled {
@@ -1330,8 +1332,8 @@ button.ext-custom-btn:disabled {
     text-decoration: underline;
     color: #6b6b6b;
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9px;
-    line-height: 11px;
+    font-size: 11px;
+    line-height: 13px;
     font-weight: 600;
     text-transform: uppercase;
     cursor: pointer;

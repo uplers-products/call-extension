@@ -15,8 +15,7 @@ const AppContent: React.FC = () => {
   const [activeNode, setActiveNode] = useState<HTMLElement | null>(null);
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { callPopupOpen, callStatus, talentData, whatsappModalOpen, wasCallEverConnected } = useSelector((state: RootState) => state.call);
-  console.log('wasCallEverConnected :', wasCallEverConnected);
+  const { callPopupOpen, callStatus, talentData, whatsappModalOpen } = useSelector((state: RootState) => state.call);
 
   const isCallInProgress =
     callPopupOpen && callStatus !== 'idle' && callStatus !== 'ended' && callStatus !== 'failed';
