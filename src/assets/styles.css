@@ -974,7 +974,7 @@ button.ext-custom-btn:disabled {
     width: 600px !important;
     max-width: calc(100vw - 40px) !important;
     max-height: 80vh !important;
-    height: 80vh !important;
+    /* height: 80vh !important; */
     overflow: visible !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
@@ -1083,26 +1083,26 @@ button.ext-custom-btn:disabled {
     overflow-y: auto;
 }
 
-#ext-whatsapp-modal-root .emailBoxWarp {
+/* #ext-whatsapp-modal-root .emailBoxWarp {
     border-radius: 14px;
     background: #f8f9ff;
-}
+} */
 
 #ext-whatsapp-modal-root .emailBoxHead {
-    border: 1px solid #bcc0e0;
+    /* border: 1px solid #bcc0e0; */
     gap: 0 16px;
-    padding: 13px 16px 13px 24px;
-    border-radius: 14px;
+    /* padding: 13px 16px 13px 24px; */
+    /* border-radius: 14px; */
     justify-content: space-between;
     align-items: center;
     display: flex;
 }
 
-#ext-whatsapp-modal-root .emailBoxHead.openEmailBox {
+/* #ext-whatsapp-modal-root .emailBoxHead.openEmailBox {
     border-color: transparent;
     border-bottom-color: #bcc0e0;
     border-radius: 14px 14px 0 0;
-}
+} */
 
 #ext-whatsapp-modal-root .emailBoxHead > h3 {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -1114,7 +1114,7 @@ button.ext-custom-btn:disabled {
 }
 
 #ext-whatsapp-modal-root .emailBoxBody {
-    padding: 15px;
+    padding-top: 15px;
     border-radius: 0 0 14px 14px;
 }
 

@@ -44,6 +44,20 @@ const formatIndianWhatsappNumber = (rawNumber?: string): string => {
 const encodeMessage = (message: string): string => encodeURIComponent(message.trim());
 
 /**
+ * Returns true if HTML content has no real text (e.g. only empty tags like <div><br></div>).
+ */
+const isTemplateContentEmpty = (html: string): boolean => {
+  if (!html || !html.trim()) return true;
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const text = doc.body.textContent ?? '';
+    return !text.trim();
+  } catch {
+    return !html.trim();
+  }
+};
+
+/**
  * Removes all {{...}} placeholder fields from template content when setting from API.
  */
 const removePlaceholderFields = (content: string): string => {
@@ -139,7 +153,7 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
   const wasCallEverConnected = useSelector((state: RootState) => state.call.wasCallEverConnected);
   const [templates, setTemplates] = useState<WhatsappTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | ''>('');
-  const [templateName, setTemplateName] = useState('');
+  // const [templateName, setTemplateName] = useState('');
   const [templateContent, setTemplateContent] = useState('');
   const [dynamicFields, setDynamicFields] = useState<WhatsappDynamicField[]>([]);
   const [templateAppliedAt, setTemplateAppliedAt] = useState<number | null>(null);
@@ -208,7 +222,7 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
 
   useEffect(() => {
     if (!selectedTemplate) return;
-    setTemplateName(selectedTemplate.name || '');
+    // setTemplateName(selectedTemplate.name || '');
     const contentWithPlaceholdersRemoved = removePlaceholderFields(selectedTemplate.content || '');
     setTemplateContent(contentWithPlaceholdersRemoved);
     setTemplateAppliedAt(Date.now());
@@ -336,7 +350,7 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
       toast.error('Phone number not available for WhatsApp.');
       return;
     }
-    if (!templateContent.trim()) {
+    if (isTemplateContentEmpty(templateContent)) {
       toast.error('Please enter template content.');
       return;
     }
@@ -347,7 +361,11 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
     window.open(url, '_blank');
   };
 
-  const hasHrId = false;
+  // const hasHrId = false;
+
+  // LOGS 
+  // console.log('templateContent', templateContent);
+
 
   return (
     <div id="ext-whatsapp-modal-root" className="ext-whatsapp-scope">
@@ -378,10 +396,11 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
           <div className="modal-container" id="scrollContainer">
             <div className="emailBoxWarp">
               <div className="emailBoxHead openEmailBox">
-                <h3>Compose Template</h3>
+                <h3>Template Content</h3>
               </div>
 
               <div className="emailBoxBody">
+                {/* Template selector - template is auto-selected (39/40) based on call connection
                 <div className="chooseEmailTemp">
                   <div className="form-group mb-0">
                     <label>
@@ -404,12 +423,14 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
                           );
                         })}
                       </select>
-                      {/* <div className="helpText">Some templates may be disabled if HR is required.</div> */}
                     </div>
                   </div>
                 </div>
+                */}
 
-                <div className="emailBoxBodyInner">
+                {/* <div className="emailBoxBodyInner" data-template-name={templateName} data-hr-required={hasHrId}> */}
+                
+                {/* Template name field - not needed when template is pre-selected
                   <div className="form-group">
                     <label>
                       Template Name <span>*</span>
@@ -422,13 +443,15 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
                       onChange={(e) => setTemplateName(e.target.value)}
                     />
                   </div>
+                  */}
 
-                  <div className="form-group">
-                    <div className="emailTempHead">
-                      <label>
-                        Template Content <span>*</span>
-                      </label>
-                      {/* Preview functionality commented out
+                <div className="form-group">
+                  {/* <div className="emailTempHead">
+                    <label>
+                      Template Content <span>*</span>
+                    </label>
+
+                    Preview functionality commented out
                       <div className="addActionBtn">
                         <button
                           type="button"
@@ -440,22 +463,23 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
                           <span>{previewLoading ? 'Previewing...' : 'Preview'}</span>
                         </button>
                       </div>
-                      */}
-                    </div>
+                     
+                  </div> */}
 
-                    <RichEmailEditor
-                      className="ext-wysiwyg"
-                      placeholder="Type here..."
-                      value={templateContent}
-                      onChange={(value) => setTemplateContent(value)}
-                      scrollingContainer="#scrollContainer"
-                      dynamicFields={dynamicFields}
-                      showDynamicDropdowns={false}
-                      templateAppliedAt={templateAppliedAt}
-                      isWhatsapp={true}
-                    />
-                  </div>
+                  <RichEmailEditor
+                    className="ext-wysiwyg"
+                    placeholder="Type here..."
+                    value={templateContent}
+                    onChange={(value) => setTemplateContent(value)}
+                    scrollingContainer="#scrollContainer"
+                    dynamicFields={dynamicFields}
+                    showDynamicDropdowns={false}
+                    templateAppliedAt={templateAppliedAt}
+                    isWhatsapp={true}
+                  />
                 </div>
+
+                {/* </div> */}
               </div>
             </div>
           </div>
@@ -488,7 +512,12 @@ const WhatsappModal: React.FC<WhatsappModalProps> = ({ isOpen, talent }) => {
                 Cancel
               </button>
               <div className="sendEmailNowAction">
-                <button className="btnPrimary" type="button" onClick={() => void handleSend()}>
+                <button
+                  className="btnPrimary"
+                  type="button"
+                  onClick={() => void handleSend()}
+                  disabled={isTemplateContentEmpty(templateContent)}
+                >
                   Send Message
                 </button>
               </div>
